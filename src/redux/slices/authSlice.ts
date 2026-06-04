@@ -1,0 +1,68 @@
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { AuthState, User, UserRole } from '../../types';
+import { MOCK_USERS } from '../../mock/db';
+
+interface ExtendedAuthState extends AuthState {
+  currentCityId: string; // 'all' or specific
+  currentBranchId: string; // 'all' or specific
+}
+
+const initialState: ExtendedAuthState = {
+  user: null,
+  token: null,
+  isAuthenticated: false,
+  isLoading: false,
+  error: null,
+  currentCityId: 'all',
+  currentBranchId: 'all'
+};
+
+const authSlice = createSlice({
+  name: 'auth',
+  initialState,
+  reducers: {
+    loginStart: (state) => {
+      state.isLoading = true;
+      state.error = null;
+    },
+    loginSuccess: (state, action: PayloadAction<{ user: User; token: string }>) => {
+      state.isLoading = false;
+      state.isAuthenticated = true;
+      state.user = action.payload.user;
+      state.token = action.payload.token;
+      state.error = null;
+    },
+    loginFailure: (state, action: PayloadAction<string>) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    },
+    logout: (state) => {
+      state.user = null;
+      state.token = null;
+      state.isAuthenticated = false;
+      state.isLoading = false;
+      state.error = null;
+    },
+    switchRole: (state, action: PayloadAction<UserRole>) => {
+      const foundUser = MOCK_USERS.find(u => u.role === action.payload);
+      if (foundUser) {
+        state.user = foundUser;
+        state.isAuthenticated = true;
+        state.token = `demo-token-${action.payload}`;
+      }
+    },
+    switchContext: (state, action: PayloadAction<{ cityId?: string; branchId?: string }>) => {
+      if (action.payload.cityId !== undefined) {
+        state.currentCityId = action.payload.cityId;
+        // Auto reset branch context when city changes
+        state.currentBranchId = 'all';
+      }
+      if (action.payload.branchId !== undefined) {
+        state.currentBranchId = action.payload.branchId;
+      }
+    }
+  }
+});
+
+export const { loginStart, loginSuccess, loginFailure, logout, switchRole, switchContext } = authSlice.actions;
+export default authSlice.reducer;
