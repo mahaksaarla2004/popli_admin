@@ -21,11 +21,10 @@ export const FraudPage: React.FC = () => {
   };
 
   const highRiskCreators = creators
-    .filter(c => c.riskScore > 35)
-    .sort((a, b) => b.riskScore - a.riskScore);
+    .filter(c => c.status === 'suspended');
 
   const fraudTransactions = transactions
-    .filter(tx => tx.fraudSuspected || (botAttackActive && tx.amount > 15000))
+    .filter(tx => botAttackActive && tx.amount > 15000)
     .slice(0, 10);
 
   const tabs = [
@@ -123,7 +122,7 @@ export const FraudPage: React.FC = () => {
                         </span>
                       </div>
                       <span className="text-foreground text-xs block">@{tx.creatorUsername} via {tx.method}</span>
-                      <span className="text-muted-foreground text-[10px] font-mono select-all block">IP: {tx.ipAddress}</span>
+                      <span className="text-muted-foreground text-[10px] font-mono select-all block">Suspicious Activity</span>
                     </div>
                     <div className="text-right shrink-0 ml-4">
                       <span className="text-destructive font-bold text-sm font-mono block">{tx.amount.toLocaleString()} Coins</span>
@@ -188,12 +187,12 @@ export const FraudPage: React.FC = () => {
                   <div className="text-right shrink-0 ml-4">
                     <span className={cn(
                       "font-bold text-sm font-mono block",
-                      creator.riskScore > 70 ? "text-destructive animate-pulse" : "text-warning"
+                      "text-destructive animate-pulse"
                     )}>
-                      Risk: {creator.riskScore}%
+                      Status: Suspended
                     </span>
                     <span className="text-muted-foreground text-[10px] block mt-0.5 font-mono select-all">
-                      FGP: {creator.deviceFingerprint.substring(0, 15)}…
+                      Action Required
                     </span>
                   </div>
                 </div>
@@ -224,7 +223,7 @@ export const FraudPage: React.FC = () => {
               {creators.slice(0, 12).map((creator) => (
                 <div key={creator.id} className="p-4 bg-muted/40 border border-border rounded-xl flex justify-between items-center hover:border-primary/30 transition-colors">
                   <div className="space-y-1">
-                    <span className="text-sm font-semibold text-foreground font-mono select-all block">{creator.ipAddress}</span>
+                    <span className="text-sm font-semibold text-foreground font-mono select-all block">{creator.name}</span>
                     <span className="text-muted-foreground text-xs block">@{creator.username} · {creator.city}</span>
                   </div>
                   <span className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold text-[10px] px-2 py-1 rounded-lg uppercase tracking-wide shrink-0 ml-4">

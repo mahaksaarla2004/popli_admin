@@ -11,7 +11,6 @@ import {
   Clock, 
   MapPin, 
   X, 
-  Activity, 
   Volume2, 
   Sliders 
 } from 'lucide-react';
@@ -253,8 +252,7 @@ export const ReelsPage: React.FC = () => {
                     {/* Viral score */}
                     <td className="p-3">
                       <div className="flex items-center gap-1 font-mono font-semibold">
-                        <Flame className={cn("w-3.5 h-3.5", reel.viralScore > 75 ? "text-orange-500 animate-pulse" : "text-slate-400")} />
-                        <span style={{ color: reel.viralScore > 75 ? '#FF7C00' : '#FFF' }}>{reel.viralScore}%</span>
+                        <span className="text-slate-400">N/A</span>
                       </div>
                     </td>
 
@@ -352,7 +350,6 @@ export const ReelsPage: React.FC = () => {
                 <span className="text-slate-500 font-normal block leading-none select-all lowercase">By @{previewVideo.creatorUsername}</span>
                 <div className="flex justify-between items-center pt-2 text-[9px] font-bold">
                   <span className="text-slate-500">VIEWS: <span className="text-[#0C4A6E] font-mono">{previewVideo.views.toLocaleString()}</span></span>
-                  <span className="text-slate-500">VIRAL SCORE: <span className="text-[#0ea5e9] font-mono">{previewVideo.viralScore}%</span></span>
                 </div>
               </div>
             </motion.div>
@@ -401,9 +398,6 @@ export const ReelsPage: React.FC = () => {
                   <span className="bg-[#F0F9FF] border border-[#BAE6FD] text-[8px] px-2 py-0.5 rounded-[1px] text-[#0C4A6E]">
                     GENRE: {selectedReel.category}
                   </span>
-                  <span className="bg-[#F0F9FF] border border-[#BAE6FD] text-[8px] px-2 py-0.5 rounded-[1px] text-[#0C4A6E]">
-                    MOOD: {selectedReel.mood}
-                  </span>
                 </div>
               </div>
 
@@ -424,33 +418,7 @@ export const ReelsPage: React.FC = () => {
                 ))}
               </div>
 
-              {/* Recommender metrics */}
-              <div className="space-y-3.5 mb-6 border-b border-[#BAE6FD] pb-6">
-                <h4 className="font-extrabold text-[#0C4A6E] text-[11px] tracking-wider uppercase border-b border-[#BAE6FD] pb-1.5 flex items-center gap-1.5">
-                  <Activity className="w-3.5 h-3.5 text-slate-500" /> RECOMMENDER CRITICAL INDEX
-                </h4>
-                
-                <div className="grid grid-cols-2 gap-4 text-[9px] font-bold">
-                  <div>
-                    <span className="text-slate-400 block">Watch completion %:</span>
-                    <span className="text-[#0C4A6E] block mt-1 font-mono font-semibold">{selectedReel.completionRate}%</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 block">REWATCH RATIO %:</span>
-                    <span className="text-[#0C4A6E] block mt-1 font-mono font-semibold">{selectedReel.rewatchRatio}%</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 block">VIRAL VELOCITY INDEX:</span>
-                    <span className="text-[#0ea5e9] block mt-1 font-mono font-black">{selectedReel.viralScore}%</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 block">GEOGRAPHY AUDIENCE:</span>
-                    <span className="text-[#0C4A6E] block mt-1 leading-normal flex items-center gap-1 font-normal">
-                      <MapPin className="w-3 h-3 text-[#0ea5e9]" /> {selectedReel.city}
-                    </span>
-                  </div>
-                </div>
-              </div>
+              {/* Recommender metrics - Removed dummy metrics */}
 
               {/* Operations Control Action Commands Console */}
               <div className="space-y-3">

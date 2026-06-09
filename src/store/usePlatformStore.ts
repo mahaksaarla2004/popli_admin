@@ -17,17 +17,7 @@ export interface Creator {
   isVerified: boolean;
   earningsFrozen: boolean;
   registrationDate: string;
-  ipAddress: string;
-  deviceFingerprint: string;
-  phone: string;
-  email: string;
-  bio: string;
-  riskScore: number; // 0 to 100
   lastActive: string;
-  watchTime: number; // in hours
-  avgRetention: number; // percentage
-  dopamineHook: number; // dopamine retention level (0-10)
-  scrollFatiguePoint: number; // avg scroll count before fatigue (0-100)
 }
 
 export interface Reel {
@@ -41,12 +31,8 @@ export interface Reel {
   likes: number;
   shares: number;
   commentsCount: number;
-  completionRate: number; // percentage
-  rewatchRatio: number; // percentage
-  viralScore: number; // 0 to 100
   city: string;
   category: 'comedy' | 'tech' | 'dance' | 'food' | 'music' | 'drama' | 'fashion' | 'vlog';
-  mood: 'joy' | 'excited' | 'emotional' | 'relaxed' | 'cringe' | 'patriotic';
   isTrending: boolean;
   isHidden: boolean;
   copyrightFlag: boolean;
@@ -67,8 +53,6 @@ export interface Transaction {
   status: 'pending' | 'approved' | 'rejected' | 'completed';
   date: string;
   method: string;
-  ipAddress: string;
-  fraudSuspected: boolean;
 }
 
 export interface Campaign {
@@ -77,10 +61,6 @@ export interface Campaign {
   type: 'push' | 'banner' | 'challenge' | 'event';
   status: 'active' | 'scheduled' | 'completed' | 'draft';
   targetAudience: string;
-  cityTarget: string;
-  sentCount: number;
-  openRate: number; // percentage
-  clickRate: number; // percentage
   dateCreated: string;
   scheduledTime?: string;
   hashtag?: string;
@@ -252,17 +232,7 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
         isVerified: u.isVerified || false,
         earningsFrozen: false,
         registrationDate: u.createdAt,
-        ipAddress: '103.86.0.1',
-        deviceFingerprint: 'dfp_unknown',
-        phone: u.phone || '',
-        email: u.email || '',
-        bio: u.bio || '',
-        riskScore: u.isBlocked ? 95 : 10,
-        lastActive: u.updatedAt,
-        watchTime: 0,
-        avgRetention: 50,
-        dopamineHook: 5,
-        scrollFatiguePoint: 50
+        lastActive: u.updatedAt
       }));
 
       const mappedReels = reels.map((r: any) => ({
@@ -276,12 +246,8 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
         likes: r.likesCount || 0,
         shares: r.sharesCount || 0,
         commentsCount: r.commentsCount || 0,
-        completionRate: 50,
-        rewatchRatio: 10,
-        viralScore: 50,
         city: r.city || 'Unknown',
         category: r.category || 'vlog',
-        mood: 'relaxed',
         isTrending: false,
         isHidden: false,
         copyrightFlag: false,
@@ -301,9 +267,7 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
         type: t.type === 'WITHDRAWAL' ? 'withdrawal' : 'purchase',
         status: t.status.toLowerCase(),
         date: t.createdAt,
-        method: t.description || 'UPI',
-        ipAddress: '103.86.0.1',
-        fraudSuspected: false
+        method: t.description || 'UPI'
       }));
 
       const mappedReports = reports.map((r: any) => ({
@@ -347,12 +311,12 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
   banUser: async (userId) => {
     await adminService.suspendUser(userId).catch(console.error);
     set((state) => ({
-      creators: state.creators.map((c) => c.id === userId ? { ...c, status: 'suspended', riskScore: 95 } : c)
+      creators: state.creators.map((c) => c.id === userId ? { ...c, status: 'suspended' } : c)
     }));
   },
   
   unbanUser: (userId) => set((state) => ({
-    creators: state.creators.map((c) => c.id === userId ? { ...c, status: 'active', riskScore: 10 } : c)
+    creators: state.creators.map((c) => c.id === userId ? { ...c, status: 'active' } : c)
   })),
   
   verifyUser: (userId) => set((state) => ({
@@ -364,7 +328,7 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
   })),
   
   shadowBanUser: (userId) => set((state) => ({
-    creators: state.creators.map((c) => c.id === userId ? { ...c, status: 'shadow_banned', riskScore: 78 } : c)
+    creators: state.creators.map((c) => c.id === userId ? { ...c, status: 'shadow_banned' } : c)
   })),
   
   freezeEarnings: (userId) => set((state) => ({
@@ -385,7 +349,7 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
   })),
   
   forceTrendReel: (reelId) => set((state) => ({
-    reels: state.reels.map((r) => r.id === reelId ? { ...r, isTrending: !r.isTrending, viralScore: 98 } : r)
+    reels: state.reels.map((r) => r.id === reelId ? { ...r, isTrending: !r.isTrending } : r)
   })),
   
   restrictAgeReel: (reelId) => set((state) => ({
@@ -422,10 +386,7 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
     const newCamp: Campaign = {
       ...campaign,
       id: `camp_${Math.floor(Math.random() * 10000)}`,
-      dateCreated: new Date().toISOString().split('T')[0],
-      sentCount: campaign.status === 'active' ? Math.floor(Math.random() * 500) + 10 : 0,
-      openRate: campaign.status === 'active' ? 15 : 0,
-      clickRate: campaign.status === 'active' ? 2 : 0
+      dateCreated: new Date().toISOString().split('T')[0]
     };
     return { campaigns: [newCamp, ...state.campaigns] };
   }),
