@@ -31,8 +31,14 @@ export const LoginPage: React.FC = () => {
 
     try {
       const data = await adminService.login(email, password);
+      
+      let mappedRole = 'super_admin';
+      if (data.user?.role) {
+        mappedRole = data.user.role === 'ADMIN' ? 'super_admin' : data.user.role.toLowerCase();
+      }
+
       dispatch(loginSuccess({
-        user: { ...data.user, role: data.user.role || 'SUPER_ADMIN' },
+        user: { ...data.user, role: mappedRole },
         token: data.token
       }));
       setIsLocalLoading(false);
