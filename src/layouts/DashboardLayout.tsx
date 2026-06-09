@@ -46,7 +46,11 @@ export const DashboardLayout: React.FC = () => {
   const navigate = useNavigate();
 
   // Zustand Store variables
-  const { botAttackActive, toggleBotAttack, simulateLiveTicks, reports } = usePlatformStore();
+  const { botAttackActive, toggleBotAttack, simulateLiveTicks, reports, fetchAllData } = usePlatformStore();
+
+  useEffect(() => {
+    fetchAllData();
+  }, [fetchAllData]);
 
   // Sync theme to document element
   useEffect(() => {

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { loginStart, loginSuccess, loginFailure } from '@/redux/slices/authSlice';
-import { MOCK_USERS } from '@/mock/db';
+import { adminService } from '@/services/adminService';
 import { Play, Lock, Mail, Loader2, ShieldCheck, Eye, EyeOff, Radio } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/utils/cn';
@@ -19,7 +19,7 @@ export const LoginPage: React.FC = () => {
 
   const handleDemoSelect = (demoEmail: string) => {
     setEmail(demoEmail);
-    setPassword('demoPassword123');
+    setPassword('admin123');
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -29,22 +29,18 @@ export const LoginPage: React.FC = () => {
     setIsLocalLoading(true);
     dispatch(loginStart());
 
-    // Simulate realistic server authentication response delay
-    setTimeout(() => {
-      const matchingUser = MOCK_USERS.find(u => u.email.toLowerCase() === email.toLowerCase());
-      
-      if (matchingUser) {
-        dispatch(loginSuccess({
-          user: matchingUser,
-          token: `demo-auth-jwt-${matchingUser.id}-${Date.now()}`
-        }));
-        setIsLocalLoading(false);
-        navigate('/');
-      } else {
-        dispatch(loginFailure('Invalid credential combination. Please select a valid demo account.'));
-        setIsLocalLoading(false);
-      }
-    }, 1000);
+    try {
+      const data = await adminService.login(email, password);
+      dispatch(loginSuccess({
+        user: { ...data.user, role: data.user.role || 'SUPER_ADMIN' },
+        token: data.token
+      }));
+      setIsLocalLoading(false);
+      navigate('/');
+    } catch (err: any) {
+      dispatch(loginFailure(err.response?.data?.message || 'Invalid credentials.'));
+      setIsLocalLoading(false);
+    }
   };
 
   return (
@@ -174,24 +170,21 @@ export const LoginPage: React.FC = () => {
               <span className="text-[10px] font-bold text-muted-foreground font-mono uppercase tracking-widest">Select Control Role</span>
             </div>
 
-            <div className="grid grid-cols-2 gap-2.5">
-              {MOCK_USERS.map((user) => (
+            <div className="grid grid-cols-1 gap-2.5">
                 <button
-                  key={user.id}
                   type="button"
-                  onClick={() => handleDemoSelect(user.email)}
+                  onClick={() => handleDemoSelect('admin@popli.com')}
                   className={cn(
                     "flex flex-col p-3.5 text-left bg-card border border-border rounded-xl hover:border-primary/50 transition-all group active:scale-[0.97] cursor-pointer",
-                    email === user.email && "border-primary shadow-md shadow-primary/10"
+                    email === 'admin@popli.com' && "border-primary shadow-md shadow-primary/10"
                   )}
                 >
                   <span className="text-[10px] font-extrabold text-foreground uppercase tracking-tight flex items-center gap-1.5 font-mono">
-                    <span className={cn("w-1.5 h-1.5 rounded-full bg-muted-foreground transition-colors", email === user.email ? "bg-primary" : "group-hover:bg-primary/80")} />
-                    {user.role.replace('_', ' ')}
+                    <span className={cn("w-1.5 h-1.5 rounded-full bg-muted-foreground transition-colors", email === 'admin@popli.com' ? "bg-primary" : "group-hover:bg-primary/80")} />
+                    SUPER ADMIN
                   </span>
-                  <span className="text-[9px] text-muted-foreground mt-1.5 truncate font-mono">{user.email}</span>
+                  <span className="text-[9px] text-muted-foreground mt-1.5 truncate font-mono">admin@popli.com</span>
                 </button>
-              ))}
             </div>
           </div>
 
