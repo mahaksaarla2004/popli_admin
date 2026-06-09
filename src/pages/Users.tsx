@@ -8,7 +8,6 @@ import {
   UserCheck, 
   EyeOff, 
   UserMinus, 
-  Calendar, 
   Smartphone, 
   Database 
 } from 'lucide-react';
@@ -118,7 +117,6 @@ export const UsersPage: React.FC = () => {
       const matchesSearch = 
         creator.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         creator.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        creator.ipAddress.includes(searchTerm) ||
         creator.city.toLowerCase().includes(searchTerm.toLowerCase());
       
       // Multi-City operational header context filter
@@ -365,7 +363,6 @@ export const UsersPage: React.FC = () => {
                     )}
                   </div>
                   <span className="text-muted-foreground block font-normal text-xs leading-none mt-0.5 select-all font-mono">@{selectedCreator.username}</span>
-                  <span className="text-muted-foreground/80 block text-[9px] leading-tight font-normal lowercase tracking-normal normal-case font-mono">{selectedCreator.email}</span>
                 </div>
               </div>
 
@@ -390,31 +387,7 @@ export const UsersPage: React.FC = () => {
                 </h4>
                 
                 <div className="grid grid-cols-2 gap-4 text-[9px] font-bold">
-                  <div>
-                    <span className="text-muted-foreground/60 block">IP ADDRESS:</span>
-                    <span className="text-foreground block mt-1 select-all font-mono">{selectedCreator.ipAddress}</span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground/60 block">DEVICE FINGERPRINT:</span>
-                    <span className="text-foreground block mt-1 select-all font-mono leading-relaxed truncate">{selectedCreator.deviceFingerprint}</span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground/60 block">USER SINCE:</span>
-                    <span className="text-foreground block mt-1 leading-normal flex items-center gap-1">
-                      <Calendar className="w-3 h-3 text-primary" /> {selectedCreator.registrationDate}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground/60 block">RISK INDEX SCORE:</span>
-                    <span className={cn(
-                      "font-mono font-black mt-1 block",
-                      selectedCreator.riskScore > 70 
-                        ? "text-red-500" 
-                        : (selectedCreator.riskScore > 35 ? "text-amber-500" : "text-emerald-500")
-                    )}>
-                      {selectedCreator.riskScore}%
-                    </span>
-                  </div>
+                  {/* Removed device fingerprint and risk score metrics */}
                 </div>
               </div>
 

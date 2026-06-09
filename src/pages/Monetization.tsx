@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { usePlatformStore, Gift as GiftItem, Transaction } from '../store/usePlatformStore';
-import { Coins, Check, X, Trash2, ShieldAlert, TrendingUp, Gift } from 'lucide-react';
+import { Coins, Check, X, Trash2, TrendingUp, Gift } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import toast from 'react-hot-toast';
 
@@ -118,23 +118,15 @@ export const MonetizationPage: React.FC = () => {
                   <div
                     key={tx.id}
                     className={cn(
-                      "p-4 border rounded-xl flex justify-between items-center hover:shadow-md transition-all",
-                      tx.fraudSuspected
-                        ? "bg-destructive/5 border-destructive/30"
-                        : "bg-muted/40 border-border hover:border-primary/30"
+                      "p-4 border rounded-xl flex justify-between items-center hover:shadow-md transition-all bg-muted/40 border-border hover:border-primary/30"
                     )}
                   >
                     <div className="space-y-1.5">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-sm font-semibold text-foreground">@{tx.creatorUsername}</span>
-                        {tx.fraudSuspected && (
-                          <span className="bg-destructive/10 border border-destructive/20 text-destructive text-[9px] font-bold px-2 py-0.5 rounded-lg uppercase flex items-center gap-1">
-                            <ShieldAlert className="w-3 h-3" /> Fraud Warning
-                          </span>
-                        )}
                       </div>
                       <span className="text-muted-foreground text-xs block">Method: {tx.method}</span>
-                      <span className="text-muted-foreground text-[10px] font-mono select-all block">IP: {tx.ipAddress}</span>
+                      <span className="text-muted-foreground text-[10px] font-mono select-all block">Payment Status: Pending</span>
                     </div>
 
                     <div className="flex items-center gap-4 shrink-0 ml-4">

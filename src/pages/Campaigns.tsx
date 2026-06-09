@@ -21,7 +21,6 @@ export const CampaignsPage: React.FC = () => {
       title: newTitle,
       type: newType,
       targetAudience: newAudience,
-      cityTarget: newCity,
       status: 'active',
       hashtag: newHashtag ? `#${newHashtag.replace('#', '').toLowerCase()}` : undefined
     });
@@ -144,7 +143,7 @@ export const CampaignsPage: React.FC = () => {
                       {camp.type}
                     </span>
                     <span className="text-muted-foreground text-[10px] flex items-center gap-1">
-                      <MapPin className="w-3 h-3 shrink-0" /> {camp.cityTarget}
+                      <MapPin className="w-3 h-3 shrink-0" /> Local
                     </span>
                   </div>
                 </div>
@@ -152,11 +151,7 @@ export const CampaignsPage: React.FC = () => {
                 <div className="text-right shrink-0 ml-4">
                   {camp.status === 'active' || camp.status === 'completed' ? (
                     <div className="space-y-1 text-xs">
-                      <span className="text-foreground font-bold block">{camp.sentCount.toLocaleString()} push</span>
-                      <span className="text-muted-foreground block">
-                        CTR: <span className="text-primary font-bold">{camp.clickRate}%</span>
-                        {' '}(Open: {camp.openRate}%)
-                      </span>
+                      <span className="text-foreground font-bold block">Active</span>
                     </div>
                   ) : (
                     <span className="bg-muted text-muted-foreground border border-border text-[10px] px-2 py-1 rounded-lg font-semibold">

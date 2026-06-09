@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { usePlatformStore } from '../store/usePlatformStore';
 import { 
   Sliders, 
-  Flame, 
   MapPin, 
   Smile, 
   Compass, 
@@ -221,10 +220,6 @@ export const FeedControlPage: React.FC = () => {
                   {/* Stats line */}
                   <div className="flex justify-between items-center border-t border-[#BAE6FD] pt-2 text-[8px] text-slate-500 font-mono">
                     <span>VIEWS: <span className="text-[#0C4A6E] font-bold">{reel.views.toLocaleString()}</span></span>
-                    <span className="flex items-center gap-1">
-                      <Flame className="w-3 h-3 text-orange-500" />
-                      <span className="text-orange-500 font-bold">{reel.viralScore}%</span>
-                    </span>
                   </div>
                 </div>
               ))}
