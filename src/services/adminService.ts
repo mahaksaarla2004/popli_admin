@@ -47,5 +47,30 @@ export const adminService = {
   deleteReel: async (reelId: string) => {
     const res = await apiClient.post(`/admin/reels/${reelId}/delete`);
     return res.data;
+  },
+
+  approveWithdrawal: async (txId: string) => {
+    const res = await apiClient.post(`/admin/transactions/${txId}/approve`);
+    return res.data;
+  },
+
+  rejectWithdrawal: async (txId: string) => {
+    const res = await apiClient.post(`/admin/transactions/${txId}/reject`);
+    return res.data;
+  },
+
+  getGifts: async () => {
+    const res = await apiClient.get('/admin/gifts');
+    return res.data;
+  },
+
+  addGift: async (giftData: any) => {
+    const res = await apiClient.post('/admin/gifts', giftData);
+    return res.data;
+  },
+
+  deleteGift: async (giftId: string) => {
+    const res = await apiClient.delete(`/admin/gifts/${giftId}`);
+    return res.data;
   }
 };

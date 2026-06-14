@@ -12,7 +12,8 @@ import {
   Map, 
   ShieldCheck, 
   HelpCircle, 
-  Settings
+  Settings,
+  Trophy
 } from 'lucide-react';
 import { UserRole } from '../types';
 
@@ -53,6 +54,14 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     icon: Coins,
     roles: ['super_admin', 'finance_admin'],
   },
+  {
+    title: 'Challenges',
+    path: '/challenges',
+    icon: Trophy,
+    roles: ['super_admin', 'marketing_admin'],
+  },
+  /* 
+  --- HIDING DUMMY TABS FOR V1 LAUNCH ---
   {
     title: 'Security & Anti-Fraud',
     path: '/fraud',
@@ -106,4 +115,5 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     icon: Settings,
     roles: ['super_admin'],
   }
+  */
 ];

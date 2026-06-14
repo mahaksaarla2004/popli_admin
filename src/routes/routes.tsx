@@ -16,6 +16,7 @@ import { NearbyPage } from '@/pages/Nearby';
 import { StaffPage } from '@/pages/Staff';
 import { SupportPage } from '@/pages/Support';
 import { SettingsPage } from '@/pages/Settings';
+import { ChallengesPage } from '@/pages/Challenges';
 
 export const router = createBrowserRouter([
   {
@@ -113,6 +114,14 @@ export const router = createBrowserRouter([
       {
         path: 'nearby',
         element: <NearbyPage />,
+      },
+      {
+        path: 'challenges',
+        element: (
+          <ProtectedRoute allowedRoles={['super_admin', 'marketing_admin']}>
+            <ChallengesPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'staff',

@@ -394,11 +394,34 @@ export const ReelsPage: React.FC = () => {
                 </div>
                 <span className="text-slate-500 block font-normal lowercase tracking-normal leading-none">By @{selectedReel.creatorUsername}</span>
                 
-                <div className="flex gap-1.5 pt-1.5">
-                  <span className="bg-[#F0F9FF] border border-[#BAE6FD] text-[8px] px-2 py-0.5 rounded-[1px] text-[#0C4A6E]">
+                <div className="flex flex-wrap gap-1.5 pt-1.5">
+                  <span className="bg-[#E0F2FE] border border-[#BAE6FD] text-[9px] px-2 py-0.5 rounded-[1px] text-[#0C4A6E] flex items-center gap-1">
                     GENRE: {selectedReel.category}
                   </span>
+                  {selectedReel.location && (
+                    <span className="bg-[#E0F2FE] border border-[#BAE6FD] text-[9px] px-2 py-0.5 rounded-[1px] text-[#0C4A6E] flex items-center gap-1">
+                      <MapPin className="w-3 h-3" /> {selectedReel.location}
+                    </span>
+                  )}
+                  {selectedReel.musicName && (
+                    <span className="bg-[#E0F2FE] border border-[#BAE6FD] text-[9px] px-2 py-0.5 rounded-[1px] text-[#0C4A6E] flex items-center gap-1">
+                      🎵 {selectedReel.musicName}
+                    </span>
+                  )}
                 </div>
+
+                {selectedReel.taggedUsers && selectedReel.taggedUsers.length > 0 && (
+                  <div className="pt-2 border-t border-[#BAE6FD] mt-2">
+                    <span className="text-[9px] text-slate-500 mb-1 block">TAGGED USERS:</span>
+                    <div className="flex flex-wrap gap-1">
+                      {selectedReel.taggedUsers.map((u, idx) => (
+                        <span key={idx} className="bg-white border border-[#BAE6FD] text-[9px] px-1.5 py-0.5 rounded text-[#0C4A6E]">
+                          @{u.username}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Engagement statistics widgets */}
