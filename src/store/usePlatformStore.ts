@@ -41,6 +41,9 @@ export interface Reel {
   ageRestricted: boolean;
   uploadDate: string;
   videoUrl: string; // fallback preview link
+  musicName?: string;
+  location?: string;
+  taggedUsers?: Array<{ id: string; username: string }>;
 }
 
 export interface Transaction {
@@ -208,12 +211,13 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
 
   fetchAllData: async () => {
     try {
-      const [users, reels, txs, reports, tickets] = await Promise.all([
+      const [users, reels, txs, reports, tickets, fetchedGifts] = await Promise.all([
         adminService.getUsers().catch(() => []),
         adminService.getReels().catch(() => []),
         adminService.getTransactions().catch(() => []),
         adminService.getReports().catch(() => []),
         adminService.getTickets().catch(() => []),
+        adminService.getGifts().catch(() => []),
       ]);
 
       const mappedCreators = users.map((u: any) => ({
@@ -262,7 +266,7 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
         id: t.id,
         creatorName: t.wallet?.user?.name || 'Unknown',
         creatorUsername: t.wallet?.user?.username || 'unknown',
-        amount: t.amount,
+        amount: t.currency === 'INR' ? Math.round(t.amount / 0.85) : t.amount,
         rupees: t.currency === 'INR' ? t.amount : t.amount * 0.85,
         type: t.type === 'WITHDRAWAL' ? 'withdrawal' : 'purchase',
         status: t.status.toLowerCase(),
@@ -295,13 +299,23 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
         chatHistory: []
       }));
 
-      set({
+      const mappedGifts = fetchedGifts.map((g: any) => ({
+        id: g.id,
+        name: g.name,
+        icon: g.iconUrl,
+        coinPrice: g.costInCoins,
+        popularity: 0,
+        animationType: g.animationType || 'fly'
+      }));
+
+      set((state) => ({
         creators: mappedCreators,
         reels: mappedReels,
         transactions: mappedTxs,
         reports: mappedReports,
-        tickets: mappedTickets
-      });
+        tickets: mappedTickets,
+        gifts: mappedGifts.length > 0 ? mappedGifts : state.gifts
+      }));
     } catch (error) {
       console.error('Failed to fetch admin data', error);
     }
@@ -361,25 +375,42 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
   })),
 
   // Payouts & Coins
-  approveWithdrawal: (txId) => set((state) => ({
-    transactions: state.transactions.map((t) => t.id === txId ? { ...t, status: 'completed' } : t)
-  })),
+  approveWithdrawal: async (txId) => {
+    await adminService.approveWithdrawal(txId).catch(console.error);
+    set((state) => ({
+      transactions: state.transactions.map((t) => t.id === txId ? { ...t, status: 'completed' } : t)
+    }));
+  },
   
-  rejectWithdrawal: (txId) => set((state) => ({
-    transactions: state.transactions.map((t) => t.id === txId ? { ...t, status: 'rejected' } : t)
-  })),
+  rejectWithdrawal: async (txId) => {
+    await adminService.rejectWithdrawal(txId).catch(console.error);
+    set((state) => ({
+      transactions: state.transactions.map((t) => t.id === txId ? { ...t, status: 'rejected' } : t)
+    }));
+  },
   
   updateCoinRates: (rates) => set((state) => ({
     coinRateSettings: { ...state.coinRateSettings, ...rates }
   })),
   
-  addGiftItem: (gift) => set((state) => ({
-    gifts: [...state.gifts, gift]
-  })),
+  addGiftItem: async (gift) => {
+    try {
+      const savedGift = await adminService.addGift(gift);
+      set((state) => ({
+        gifts: [...state.gifts, { ...gift, id: savedGift.id }]
+      }));
+    } catch (error) {
+      console.error(error);
+      set((state) => ({ gifts: [...state.gifts, gift] }));
+    }
+  },
   
-  deleteGiftItem: (giftId) => set((state) => ({
-    gifts: state.gifts.filter((g) => g.id !== giftId)
-  })),
+  deleteGiftItem: async (giftId) => {
+    await adminService.deleteGift(giftId).catch(console.error);
+    set((state) => ({
+      gifts: state.gifts.filter((g) => g.id !== giftId)
+    }));
+  },
 
   // Campaigns & Moderation
   addCampaign: (campaign) => set((state) => {
