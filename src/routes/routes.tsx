@@ -117,11 +117,40 @@ export const router = createBrowserRouter([
       },
       {
         path: 'challenges',
-        element: (
-          <ProtectedRoute allowedRoles={['super_admin', 'marketing_admin']}>
-            <ChallengesPage />
-          </ProtectedRoute>
-        ),
+        children: [
+          {
+            index: true,
+            element: (
+              <ProtectedRoute allowedRoles={['super_admin', 'marketing_admin']}>
+                <ChallengesPage />
+              </ProtectedRoute>
+            ),
+          },
+          {
+            path: 'create',
+            element: (
+              <ProtectedRoute allowedRoles={['super_admin', 'marketing_admin']}>
+                <div className="p-6">Create Challenge Page (Coming Soon)</div>
+              </ProtectedRoute>
+            ),
+          },
+          {
+            path: ':id',
+            element: (
+              <ProtectedRoute allowedRoles={['super_admin', 'marketing_admin']}>
+                <div className="p-6">Challenge Detail Page (Coming Soon)</div>
+              </ProtectedRoute>
+            ),
+          },
+          {
+            path: ':id/edit',
+            element: (
+              <ProtectedRoute allowedRoles={['super_admin', 'marketing_admin']}>
+                <div className="p-6">Edit Challenge Page (Coming Soon)</div>
+              </ProtectedRoute>
+            ),
+          }
+        ]
       },
       {
         path: 'staff',

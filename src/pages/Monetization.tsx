@@ -17,7 +17,7 @@ export const MonetizationPage: React.FC = () => {
     creators
   } = usePlatformStore();
 
-  const [activeSubTab, setActiveSubTab] = useState<'withdrawal' | 'coin' | 'gifts'>('withdrawal');
+  const [activeSubTab, setActiveSubTab] = useState<'withdrawal' | 'coin' | 'gifts' | 'referrals'>('withdrawal');
   const [newGiftName, setNewGiftName] = useState('');
   const [newGiftIcon, setNewGiftIcon] = useState('🎁');
   const [newGiftPrice, setNewGiftPrice] = useState(10);
@@ -26,10 +26,41 @@ export const MonetizationPage: React.FC = () => {
   const [redeemRate, setRedeemRate] = useState(coinRateSettings.withdrawalRedeemRate);
   const [minCoins, setMinCoins] = useState(coinRateSettings.minimumWithdrawalCoins);
 
+  const [creatorReward, setCreatorReward] = useState(50);
+  const [standardReward, setStandardReward] = useState(20);
+  const [superReward, setSuperReward] = useState(500);
+
   const handleUpdateRates = (e: React.FormEvent) => {
     e.preventDefault();
     updateCoinRates({ purchasePricePerCoin: purchasePrice, withdrawalRedeemRate: redeemRate, minimumWithdrawalCoins: minCoins });
     toast.success('POPLI coin-rupee economy re-calibrated!', { icon: '💰' });
+  };
+
+  React.useEffect(() => {
+    fetch('http://localhost:3001/admin/configs', {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.REFERRAL_CREATOR_REWARD) setCreatorReward(data.REFERRAL_CREATOR_REWARD);
+        if (data.REFERRAL_STANDARD_REWARD) setStandardReward(data.REFERRAL_STANDARD_REWARD);
+        if (data.REFERRAL_SUPER_REWARD) setSuperReward(data.REFERRAL_SUPER_REWARD);
+      }).catch(console.error);
+  }, []);
+
+  const handleUpdateReferralRates = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const token = localStorage.getItem('token');
+    try {
+      await Promise.all([
+        fetch('http://localhost:3001/admin/configs', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ key: 'REFERRAL_CREATOR_REWARD', value: creatorReward }) }),
+        fetch('http://localhost:3001/admin/configs', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ key: 'REFERRAL_STANDARD_REWARD', value: standardReward }) }),
+        fetch('http://localhost:3001/admin/configs', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ key: 'REFERRAL_SUPER_REWARD', value: superReward }) })
+      ]);
+      toast.success('Referral Rewards Updated!', { icon: '🤝' });
+    } catch (e) {
+      toast.error('Failed to update referral rewards');
+    }
   };
 
   const handleApprovePayout = (tx: Transaction) => {
@@ -76,6 +107,7 @@ export const MonetizationPage: React.FC = () => {
     { id: 'withdrawal', label: 'Withdrawal Payouts' },
     { id: 'coin', label: 'Coin System Rate' },
     { id: 'gifts', label: 'Gifts Management' },
+    { id: 'referrals', label: 'Referral Rewards' },
   ] as const;
 
   return (
@@ -373,6 +405,70 @@ export const MonetizationPage: React.FC = () => {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      )}
+
+      {activeSubTab === 'referrals' && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-card border border-border rounded-2xl p-6 space-y-5 shadow-sm">
+            <div className="flex items-center gap-2.5">
+              <div className="p-2 bg-emerald-500/10 rounded-lg">
+                <TrendingUp className="w-4 h-4 text-emerald-500" />
+              </div>
+              <span className="text-sm font-semibold text-foreground">Referral Program Rewards</span>
+            </div>
+
+            <form onSubmit={handleUpdateReferralRates} className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  Creator Referral (INR)
+                </label>
+                <input
+                  type="number"
+                  required
+                  value={creatorReward}
+                  onChange={(e) => setCreatorReward(parseInt(e.target.value))}
+                  className="w-full h-10 bg-muted/40 border border-border rounded-xl px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                />
+                <span className="text-[10px] text-muted-foreground">Reward for referring a friend with 1K+ followers</span>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  Standard User Referral (INR)
+                </label>
+                <input
+                  type="number"
+                  required
+                  value={standardReward}
+                  onChange={(e) => setStandardReward(parseInt(e.target.value))}
+                  className="w-full h-10 bg-muted/40 border border-border rounded-xl px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                />
+                <span className="text-[10px] text-muted-foreground">Reward for referring a normal viewer</span>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  Super Referral (INR)
+                </label>
+                <input
+                  type="number"
+                  required
+                  value={superReward}
+                  onChange={(e) => setSuperReward(parseInt(e.target.value))}
+                  className="w-full h-10 bg-muted/40 border border-border rounded-xl px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                />
+                <span className="text-[10px] text-muted-foreground">Reward for referring 10+ creators in a month</span>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full h-11 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 active:scale-[0.98] transition-all text-sm mt-4"
+              >
+                Update Referral Rewards
+              </button>
+            </form>
           </div>
         </div>
       )}
