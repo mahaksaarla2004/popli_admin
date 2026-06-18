@@ -3,7 +3,7 @@ import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 import { logout } from '@/redux/slices/authSlice';
 import { NAVIGATION_ITEMS } from '@/constants/navigation';
-import { RoleSwitcher } from '@/components/RoleSwitcher';
+import { ContextSwitcher } from '@/components/ContextSwitcher';
 import { GlobalContextBar } from '@/components/GlobalContextBar';
 import { usePlatformStore } from '@/store/usePlatformStore';
 import { 
@@ -391,8 +391,7 @@ export const DashboardLayout: React.FC = () => {
         </main>
       </div>
 
-      {/* Dev Launcher Clearance Selector */}
-      <RoleSwitcher />
+      <ContextSwitcher />
 
       {/* Notifications Panel Pop */}
       <AnimatePresence>

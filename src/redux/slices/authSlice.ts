@@ -1,8 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AuthState, User, UserRole } from '../../types';
-import { MOCK_USERS } from '../../mock/db';
-
-interface ExtendedAuthState extends AuthState {
+import { AuthState, User } from '../../types';interface ExtendedAuthState extends AuthState {
   currentCityId: string; // 'all' or specific
   currentBranchId: string; // 'all' or specific
 }
@@ -43,14 +40,6 @@ const authSlice = createSlice({
       state.isLoading = false;
       state.error = null;
     },
-    switchRole: (state, action: PayloadAction<UserRole>) => {
-      const foundUser = MOCK_USERS.find(u => u.role === action.payload);
-      if (foundUser) {
-        state.user = foundUser;
-        state.isAuthenticated = true;
-        state.token = `demo-token-${action.payload}`;
-      }
-    },
     switchContext: (state, action: PayloadAction<{ cityId?: string; branchId?: string }>) => {
       if (action.payload.cityId !== undefined) {
         state.currentCityId = action.payload.cityId;
@@ -64,5 +53,5 @@ const authSlice = createSlice({
   }
 });
 
-export const { loginStart, loginSuccess, loginFailure, logout, switchRole, switchContext } = authSlice.actions;
+export const { loginStart, loginSuccess, loginFailure, logout, switchContext } = authSlice.actions;
 export default authSlice.reducer;
