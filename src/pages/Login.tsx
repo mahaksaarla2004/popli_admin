@@ -3,9 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { loginStart, loginSuccess, loginFailure } from '@/redux/slices/authSlice';
 import { adminService } from '@/services/adminService';
-import { Play, Lock, Mail, Loader2, ShieldCheck, Eye, EyeOff, Radio } from 'lucide-react';
+import { Play, Lock, Mail, Loader2, Eye, EyeOff, Radio } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { cn } from '@/utils/cn';
 
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -16,12 +15,6 @@ export const LoginPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { error } = useAppSelector(state => state.auth);
-
-  const handleDemoSelect = (demoEmail: string) => {
-    setEmail(demoEmail);
-    setPassword('admin123');
-  };
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
@@ -168,32 +161,6 @@ export const LoginPage: React.FC = () => {
               )}
             </button>
           </form>
-
-          {/* 🚀 Quick Demo Entry Section */}
-          <div className="pt-6 border-t border-border">
-            <div className="flex items-center gap-2 mb-4 pl-0.5">
-              <ShieldCheck className="w-4 h-4 text-primary" />
-              <span className="text-[10px] font-bold text-muted-foreground font-mono uppercase tracking-widest">Select Control Role</span>
-            </div>
-
-            <div className="grid grid-cols-1 gap-2.5">
-                <button
-                  type="button"
-                  onClick={() => handleDemoSelect('admin@popli.com')}
-                  className={cn(
-                    "flex flex-col p-3.5 text-left bg-card border border-border rounded-xl hover:border-primary/50 transition-all group active:scale-[0.97] cursor-pointer",
-                    email === 'admin@popli.com' && "border-primary shadow-md shadow-primary/10"
-                  )}
-                >
-                  <span className="text-[10px] font-extrabold text-foreground uppercase tracking-tight flex items-center gap-1.5 font-mono">
-                    <span className={cn("w-1.5 h-1.5 rounded-full bg-muted-foreground transition-colors", email === 'admin@popli.com' ? "bg-primary" : "group-hover:bg-primary/80")} />
-                    SUPER ADMIN
-                  </span>
-                  <span className="text-[9px] text-muted-foreground mt-1.5 truncate font-mono">admin@popli.com</span>
-                </button>
-            </div>
-          </div>
-
         </div>
       </div>
     </div>

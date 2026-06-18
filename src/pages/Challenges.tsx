@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Target, Plus, Search, Calendar, Users, Trophy } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Target, Plus, Calendar, Users, Trophy } from 'lucide-react';
 import { challengesApi } from '@/services/api/challenges';
 import { useNavigate } from 'react-router-dom';
 

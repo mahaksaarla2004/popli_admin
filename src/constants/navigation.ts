@@ -4,16 +4,8 @@ import {
   Video, 
   Sliders, 
   Coins, 
-  ShieldAlert, 
-  Megaphone, 
-  AlertTriangle, 
-  MessageSquare, 
-  BarChart3, 
-  Map, 
-  ShieldCheck, 
-  HelpCircle, 
-  Settings,
   Trophy
+} from 'lucide-react';
 } from 'lucide-react';
 import { UserRole } from '../types';
 
