@@ -49,9 +49,14 @@ const authSlice = createSlice({
       if (action.payload.branchId !== undefined) {
         state.currentBranchId = action.payload.branchId;
       }
+    },
+    switchRole: (state, action: PayloadAction<import('../../types').UserRole>) => {
+      if (state.user) {
+        state.user.role = action.payload;
+      }
     }
   }
 });
 
-export const { loginStart, loginSuccess, loginFailure, logout, switchContext } = authSlice.actions;
+export const { loginStart, loginSuccess, loginFailure, logout, switchContext, switchRole } = authSlice.actions;
 export default authSlice.reducer;

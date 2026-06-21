@@ -3,7 +3,7 @@ import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 import { logout } from '@/redux/slices/authSlice';
 import { NAVIGATION_ITEMS } from '@/constants/navigation';
-import { ContextSwitcher } from '@/components/ContextSwitcher';
+import { RoleSwitcher } from '@/components/RoleSwitcher';
 import { GlobalContextBar } from '@/components/GlobalContextBar';
 import { usePlatformStore } from '@/store/usePlatformStore';
 import { 
@@ -391,7 +391,7 @@ export const DashboardLayout: React.FC = () => {
         </main>
       </div>
 
-      <ContextSwitcher />
+      <RoleSwitcher />
 
       {/* Notifications Panel Pop */}
       <AnimatePresence>
