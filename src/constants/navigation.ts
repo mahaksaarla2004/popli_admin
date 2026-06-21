@@ -6,7 +6,6 @@ import {
   Coins, 
   Trophy
 } from 'lucide-react';
-} from 'lucide-react';
 import { UserRole } from '../types';
 
 export interface NavItem {
