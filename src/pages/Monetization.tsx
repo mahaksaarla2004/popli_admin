@@ -3,6 +3,7 @@ import { usePlatformStore, Gift as GiftItem, Transaction } from '../store/usePla
 import { Coins, Check, X, Trash2, TrendingUp, Gift } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import toast from 'react-hot-toast';
+import { API_URL } from '../services/api';
 
 export const MonetizationPage: React.FC = () => {
   const {
@@ -37,7 +38,7 @@ export const MonetizationPage: React.FC = () => {
   };
 
   React.useEffect(() => {
-    fetch('http://localhost:3001/admin/configs', {
+    fetch(`${API_URL}/admin/configs`, {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
     })
       .then(res => res.json())
@@ -53,9 +54,9 @@ export const MonetizationPage: React.FC = () => {
     const token = localStorage.getItem('token');
     try {
       await Promise.all([
-        fetch('http://localhost:3001/admin/configs', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ key: 'REFERRAL_CREATOR_REWARD', value: creatorReward }) }),
-        fetch('http://localhost:3001/admin/configs', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ key: 'REFERRAL_STANDARD_REWARD', value: standardReward }) }),
-        fetch('http://localhost:3001/admin/configs', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ key: 'REFERRAL_SUPER_REWARD', value: superReward }) })
+        fetch(`${API_URL}/admin/configs`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ key: 'REFERRAL_CREATOR_REWARD', value: creatorReward }) }),
+        fetch(`${API_URL}/admin/configs`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ key: 'REFERRAL_STANDARD_REWARD', value: standardReward }) }),
+        fetch(`${API_URL}/admin/configs`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ key: 'REFERRAL_SUPER_REWARD', value: superReward }) })
       ]);
       toast.success('Referral Rewards Updated!', { icon: '🤝' });
     } catch (e) {
