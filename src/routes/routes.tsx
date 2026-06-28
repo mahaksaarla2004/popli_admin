@@ -17,6 +17,7 @@ import { StaffPage } from '@/pages/Staff';
 import { SupportPage } from '@/pages/Support';
 import { SettingsPage } from '@/pages/Settings';
 import { ChallengesPage } from '@/pages/Challenges';
+import { ChallengeDetailPage } from '@/pages/ChallengeDetail';
 
 export const router = createBrowserRouter([
   {
@@ -134,11 +135,11 @@ export const router = createBrowserRouter([
               </ProtectedRoute>
             ),
           },
-          {
+        {
             path: ':id',
             element: (
               <ProtectedRoute allowedRoles={['super_admin', 'marketing_admin']}>
-                <div className="p-6">Challenge Detail Page (Coming Soon)</div>
+                <ChallengeDetailPage />
               </ProtectedRoute>
             ),
           },

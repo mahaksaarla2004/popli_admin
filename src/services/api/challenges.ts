@@ -22,8 +22,11 @@ export const challengesApi = {
   freezeLeaderboard: (id: string, winnerUserIds: string[]) => 
     api.post(`/challenges/admin/${id}/winners`, { winnerUserIds }),
     
-  getRewards: (id: string) => 
+getRewards: (id: string) => 
     api.get(`/challenges/admin/${id}/rewards`),
+    
+  getAnalytics: (id: string) => 
+    api.get(`/challenges/admin/${id}/analytics`),
     
   processReward: (txId: string) => 
     api.post(`/challenges/admin/rewards/${txId}/process`),

@@ -304,15 +304,15 @@ export const MonetizationPage: React.FC = () => {
             <span className="text-sm font-semibold text-foreground">Commission Analysis</span>
             <div className="p-4 bg-muted/40 border border-border rounded-xl space-y-3">
               <span className="font-semibold text-foreground text-sm block">Platform Tax Revenues</span>
-              <p className="text-muted-foreground text-xs leading-relaxed">
-                For every gift sent, POPLI injects a platform commission of 20% into platform revenue vaults.
+        <p className="text-muted-foreground text-xs leading-relaxed">
+                For every gift sent, POPLI injects a platform commission of 40% into platform revenue vaults.
               </p>
               <p className="text-muted-foreground text-xs leading-relaxed">
-                Creators receive 80% equivalent coin balances which redeem at ₹{coinRateSettings.withdrawalRedeemRate} per coin.
+                Creators receive 60% equivalent coin balances which redeem at ₹{coinRateSettings.withdrawalRedeemRate} per coin.
               </p>
               <div className="pt-3 border-t border-border flex justify-between items-center">
                 <span className="text-xs text-muted-foreground">Platform Commission</span>
-                <span className="text-primary font-bold text-sm">20% Fixed</span>
+                <span className="text-primary font-bold text-sm">40% Fixed</span>
               </div>
             </div>
           </div>
