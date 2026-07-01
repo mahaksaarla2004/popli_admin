@@ -37,60 +37,60 @@ export const GlobalContextBar: React.FC = () => {
   const totalReels = reels.length;
 
   return (
-    <div className="bg-[#FFFFFF] border-t border-b border-[#BAE6FD] text-slate-600 text-[10px] px-6 py-2 flex flex-col md:flex-row items-start md:items-center gap-4 select-none font-mono">
-      <div className="flex items-center gap-1.5 text-[#0ea5e9] font-black tracking-widest uppercase shrink-0">
-        <span className="h-1.5 w-1.5 rounded-full bg-[#0ea5e9] animate-pulse" />
+    <div className="bg-card border-t border-b border-border text-muted-foreground text-[10px] px-6 py-2 flex flex-col md:flex-row items-start md:items-center gap-4 select-none font-mono">
+      <div className="flex items-center gap-1.5 text-primary font-black tracking-widest uppercase shrink-0">
+        <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
         POPLI OPERATIONS SCOPE:
       </div>
 
       <div className="flex flex-wrap gap-4 flex-1 items-center w-full">
         {/* City/Geo Context Selector */}
-        <div className="flex items-center gap-1.5 bg-[#F0F9FF] border border-[#BAE6FD] px-2 py-0.5 rounded-[2px] hover:border-[#0ea5e9]/40 transition-colors">
-          <MapPin className="h-3 w-3 text-[#0ea5e9]" />
+        <div className="flex items-center gap-1.5 bg-muted border border-border px-2 py-0.5 rounded-[2px] hover:border-primary/40 transition-colors">
+          <MapPin className="h-3 w-3 text-primary" />
           <select 
             value={selectedCity}
             onChange={handleCityChange}
-            className="bg-transparent border-none outline-none text-[#0C4A6E] font-bold text-[10px] pr-1 cursor-pointer font-mono uppercase"
+            className="bg-transparent border-none outline-none text-foreground font-bold text-[10px] pr-1 cursor-pointer font-mono uppercase"
           >
             {CITIES.map(c => (
-              <option key={c.id} value={c.id} className="text-[#0C4A6E] bg-[#FFFFFF] font-bold">{c.name}</option>
+              <option key={c.id} value={c.id} className="text-foreground bg-card font-bold">{c.name}</option>
             ))}
           </select>
         </div>
 
         {/* Live System Performance Statistics */}
-        <div className="hidden sm:flex items-center gap-4 text-[9px] font-semibold text-slate-500">
+        <div className="hidden sm:flex items-center gap-4 text-[9px] font-semibold text-muted-foreground">
           <div className="flex items-center gap-1">
             <span>CREATORS:</span>
-            <span className="text-[#0C4A6E]">{totalUsers}</span>
+            <span className="text-foreground">{totalUsers}</span>
           </div>
           <div className="flex items-center gap-1">
             <span>REELS STREAM:</span>
-            <span className="text-[#0C4A6E]">{totalReels} ACTIVE</span>
+            <span className="text-foreground">{totalReels} ACTIVE</span>
           </div>
           <div className="flex items-center gap-1">
-            <Wifi className="h-2.5 w-2.5 text-[#0ea5e9]" />
+            <Wifi className="h-2.5 w-2.5 text-primary" />
             <span>PING:</span>
-            <span className="text-[#0C4A6E] font-mono">34ms (STABLE)</span>
+            <span className="text-foreground font-mono">34ms (STABLE)</span>
           </div>
         </div>
 
         {/* Alert status indicators based on bot simulation */}
         <div className="md:ml-auto flex items-center gap-2">
           {botAttackActive ? (
-            <div className="flex items-center gap-1.5 bg-red-50/40 border border-red-500/50 text-red-600 font-bold uppercase px-2 py-0.5 rounded-[2px] animate-pulse">
+            <div className="flex items-center gap-1.5 bg-destructive/10 border border-destructive/50 text-destructive font-bold uppercase px-2 py-0.5 rounded-[2px] animate-pulse">
               <AlertTriangle className="h-3 w-3" /> 
               THREAT INDEX: HIGH (BOT INTRUSION)
             </div>
           ) : (
-            <div className="flex items-center gap-1.5 bg-emerald-50/30 border border-emerald-200 text-emerald-700 font-bold uppercase px-2 py-0.5 rounded-[2px]">
-              <ShieldCheck className="h-3 w-3 text-emerald-700" />
+            <div className="flex items-center gap-1.5 bg-success/10 border border-success/30 text-success font-bold uppercase px-2 py-0.5 rounded-[2px]">
+              <ShieldCheck className="h-3 w-3 text-success" />
               SHIELD STATUS: SECURE (LIVE FEED ACTIVE)
             </div>
           )}
           
-          <div className="hidden md:flex items-center gap-1.5 bg-[#F0F9FF] border border-[#BAE6FD] text-slate-600 font-bold uppercase px-2 py-0.5 rounded-[2px]">
-            <Check className="h-2.5 w-2.5 text-[#0ea5e9]" /> 
+          <div className="hidden md:flex items-center gap-1.5 bg-muted border border-border text-muted-foreground font-bold uppercase px-2 py-0.5 rounded-[2px]">
+            <Check className="h-2.5 w-2.5 text-primary" /> 
             <span>{activeCityName}</span>
           </div>
         </div>
