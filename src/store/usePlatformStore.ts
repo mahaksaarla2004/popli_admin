@@ -211,13 +211,14 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
 
   fetchAllData: async () => {
     try {
-      const [users, reels, txs, reports, tickets, fetchedGifts] = await Promise.all([
+    const [users, reels, txs, reports, tickets, fetchedGifts, withdrawals] = await Promise.all([
         adminService.getUsers().catch(() => []),
         adminService.getReels().catch(() => []),
         adminService.getTransactions().catch(() => []),
         adminService.getReports().catch(() => []),
         adminService.getTickets().catch(() => []),
         adminService.getGifts().catch(() => []),
+        adminService.getWithdrawals().catch(() => []),
       ]);
 
       const mappedCreators = users.map((u: any) => ({
@@ -262,7 +263,7 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
         videoUrl: r.mediaUrl || "https://assets.mixkit.co/videos/preview/mixkit-girl-in-neon-sign-holding-a-camera-40742-large.mp4"
       }));
 
-      const mappedTxs = txs.map((t: any) => ({
+    const mappedTxs = txs.map((t: any) => ({
         id: t.id,
         creatorName: t.wallet?.user?.name || 'Unknown',
         creatorUsername: t.wallet?.user?.username || 'unknown',
@@ -272,6 +273,18 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
         status: t.status.toLowerCase(),
         date: t.createdAt,
         method: t.description || 'UPI'
+      }));
+
+      const mappedWithdrawals = withdrawals.map((w: any) => ({
+        id: w.id,
+        creatorName: w.wallet?.user?.name || 'Unknown',
+        creatorUsername: w.wallet?.user?.username || 'unknown',
+        amount: Math.round(w.amount / 0.85),
+        rupees: w.amount,
+        type: 'withdrawal',
+        status: w.status.toLowerCase(),
+        date: w.createdAt,
+        method: 'UPI'
       }));
 
       const mappedReports = reports.map((r: any) => ({
@@ -308,10 +321,10 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
         animationType: g.animationType || 'fly'
       }));
 
-      set((state) => ({
+     set((state) => ({
         creators: mappedCreators,
         reels: mappedReels,
-        transactions: mappedTxs,
+        transactions: [...mappedTxs, ...mappedWithdrawals],
         reports: mappedReports,
         tickets: mappedTickets,
         gifts: mappedGifts.length > 0 ? mappedGifts : state.gifts

@@ -15,7 +15,8 @@ export const MonetizationPage: React.FC = () => {
     deleteGiftItem,
     approveWithdrawal,
     rejectWithdrawal,
-    creators
+    creators,
+    fetchAllData
   } = usePlatformStore();
 
   const [activeSubTab, setActiveSubTab] = useState<'withdrawal' | 'coin' | 'gifts' | 'referrals'>('withdrawal');
@@ -36,6 +37,10 @@ export const MonetizationPage: React.FC = () => {
     updateCoinRates({ purchasePricePerCoin: purchasePrice, withdrawalRedeemRate: redeemRate, minimumWithdrawalCoins: minCoins });
     toast.success('POPLI coin-rupee economy re-calibrated!', { icon: '💰' });
   };
+
+   React.useEffect(() => {
+    fetchAllData();
+  }, []);
 
   React.useEffect(() => {
     fetch(`${API_URL}/admin/configs`, {

@@ -24,8 +24,13 @@ export const adminService = {
     return res.data;
   },
 
-  getTransactions: async () => {
+getTransactions: async () => {
     const res = await apiClient.get('/admin/transactions');
+    return res.data;
+  },
+
+  getWithdrawals: async () => {
+    const res = await apiClient.get('/admin/withdrawals');
     return res.data;
   },
 
@@ -49,13 +54,13 @@ export const adminService = {
     return res.data;
   },
 
-  approveWithdrawal: async (txId: string) => {
-    const res = await apiClient.post(`/admin/transactions/${txId}/approve`);
+ approveWithdrawal: async (txId: string) => {
+    const res = await apiClient.post(`/admin/withdrawals/${txId}/approve`);
     return res.data;
   },
 
   rejectWithdrawal: async (txId: string) => {
-    const res = await apiClient.post(`/admin/transactions/${txId}/reject`);
+    const res = await apiClient.post(`/admin/withdrawals/${txId}/reject`);
     return res.data;
   },
 
