@@ -4,11 +4,13 @@ import { challengesApi } from '@/services/api/challenges';
 import { useNavigate } from 'react-router-dom';
 
 export const ChallengesPage = () => {
-  const [challenges, setChallenges] = useState<any[]>([]);
+const [challenges, setChallenges] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    challengesApi.getChallenges({}).then(res => setChallenges(res.data.data)).catch(console.error);
+    setLoading(true);
+    challengesApi.getChallenges({}).then(res => setChallenges(res.data.data)).catch(console.error).finally(() => setLoading(false));
   }, []);
 
   return (
@@ -16,8 +18,8 @@ export const ChallengesPage = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 uppercase">Challenges Management</h1>
-          <p className="text-sm text-slate-500 font-mono">Create and monitor daily/weekly contests</p>
+       <h1 className="text-2xl font-bold tracking-tight text-foreground uppercase">Challenges Management</h1>
+          <p className="text-sm text-muted-foreground font-mono">Create and monitor daily/weekly contests</p>
         </div>
         <div className="flex items-center gap-3">
           <button 
@@ -30,48 +32,73 @@ export const ChallengesPage = () => {
         </div>
       </div>
 
-      {/* Grid */}
+     {/* Grid */}
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, i) => (
+         <div key={i} className="bg-card border border-border rounded-sm p-5 shadow-sm animate-pulse">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-sm bg-muted" />
+                <div className="space-y-2">
+                  <div className="h-3 w-32 bg-muted rounded" />
+                  <div className="h-2 w-16 bg-muted/60 rounded" />
+                </div>
+              </div>
+              <div className="space-y-3 mb-5">
+                <div className="h-2 bg-muted/60 rounded w-full" />
+                <div className="h-2 bg-muted/60 rounded w-3/4" />
+                <div className="h-2 bg-muted/60 rounded w-1/2" />
+              </div>
+              <div className="h-7 bg-muted/60 rounded w-full mt-4 border-t border-border pt-4" />
+            </div>
+          ))}
+        </div>
+      ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {challenges.length === 0 && (
+        <div className="col-span-3 text-center py-16 text-muted-foreground font-mono text-sm">No challenges found</div>
+        )}
         {challenges.map(challenge => (
-          <div key={challenge.id} className="bg-white border border-slate-200 rounded-sm p-5 shadow-sm hover:border-[#3B82F6]/50 transition-colors">
+        <div key={challenge.id} className="bg-card border border-border rounded-sm p-5 shadow-sm hover:border-primary/50 transition-colors">
             <div className="flex justify-between items-start mb-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-sm bg-blue-50 text-blue-600 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-sm bg-accent text-primary flex items-center justify-center">
                   <Target className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 uppercase tracking-tight">{challenge.title}</h3>
-                  <span className="text-[10px] font-mono bg-blue-100 text-blue-700 px-2 py-0.5 rounded-sm">{challenge.type}</span>
+                  <h3 className="font-bold text-card-foreground uppercase tracking-tight">{challenge.title}</h3>
+                  <span className="text-[10px] font-mono bg-accent text-accent-foreground px-2 py-0.5 rounded-sm">{challenge.type}</span>
                 </div>
               </div>
             </div>
             
             <div className="space-y-3 mb-5">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-500 font-mono uppercase text-xs flex items-center gap-1"><Trophy className="w-3 h-3"/> Reward Pool</span>
-                <span className="font-bold text-emerald-600">₹{challenge.rewardPool}</span>
+                <span className="text-muted-foreground font-mono uppercase text-xs flex items-center gap-1"><Trophy className="w-3 h-3"/> Reward Pool</span>
+                <span className="font-bold text-success">₹{challenge.rewardPool}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-500 font-mono uppercase text-xs flex items-center gap-1"><Users className="w-3 h-3"/> Participants</span>
-                <span className="font-bold text-slate-700">{challenge.participantCount}</span>
+                <span className="text-muted-foreground font-mono uppercase text-xs flex items-center gap-1"><Users className="w-3 h-3"/> Participants</span>
+                <span className="font-bold text-card-foreground">{challenge.participantCount}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-500 font-mono uppercase text-xs flex items-center gap-1"><Calendar className="w-3 h-3"/> Status</span>
-                <span className="font-medium text-slate-700">{challenge.status}</span>
+                <span className="text-muted-foreground font-mono uppercase text-xs flex items-center gap-1"><Calendar className="w-3 h-3"/> Status</span>
+                <span className="font-medium text-card-foreground">{challenge.status}</span>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 pt-4 border-t border-slate-100">
+            <div className="flex items-center gap-2 pt-4 border-t border-border">
               <button 
                 onClick={() => navigate(`/challenges/${challenge.id}`)}
-                className="flex-1 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 py-1.5 text-xs font-bold uppercase tracking-wide transition-colors"
+                className="flex-1 bg-muted hover:bg-muted/70 text-card-foreground border border-border py-1.5 text-xs font-bold uppercase tracking-wide transition-colors"
               >
                 Manage
               </button>
             </div>
           </div>
-        ))}
+     ))}
       </div>
+      )}
     </div>
   );
 };

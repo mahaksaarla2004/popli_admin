@@ -17,6 +17,8 @@ import { StaffPage } from '@/pages/Staff';
 import { SupportPage } from '@/pages/Support';
 import { SettingsPage } from '@/pages/Settings';
 import { ChallengesPage } from '@/pages/Challenges';
+import { CreateChallengePage } from '@/pages/CreateChallenge';
+import { ChallengeDetailPage } from '@/pages/ChallengeDetail';
 
 export const router = createBrowserRouter([
   {
@@ -126,19 +128,19 @@ export const router = createBrowserRouter([
               </ProtectedRoute>
             ),
           },
-          {
+        {
             path: 'create',
             element: (
               <ProtectedRoute allowedRoles={['super_admin', 'marketing_admin']}>
-                <div className="p-6">Create Challenge Page (Coming Soon)</div>
+                <CreateChallengePage />
               </ProtectedRoute>
             ),
           },
-          {
+       {
             path: ':id',
             element: (
               <ProtectedRoute allowedRoles={['super_admin', 'marketing_admin']}>
-                <div className="p-6">Challenge Detail Page (Coming Soon)</div>
+                <ChallengeDetailPage />
               </ProtectedRoute>
             ),
           },

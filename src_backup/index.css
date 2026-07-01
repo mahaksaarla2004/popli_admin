@@ -6,10 +6,7 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: beige;
-  color: black;
 }
-
 body {
   margin: 0;
   min-width: 320px;

@@ -14,17 +14,14 @@ import toast from 'react-hot-toast';
 import { cn } from '@/utils/cn';
 
 export const FeedControlPage: React.FC = () => {
-  // Zustand Store integrations
   const { recommendationWeights, setWeights, reels } = usePlatformStore();
 
-  // Local control states
   const [activeSubTab, setActiveSubTab] = useState<'recommender' | 'simulation' | 'boost'>('recommender');
   const [boostType, setBoostType] = useState<'hashtag' | 'category' | 'creator'>('hashtag');
   const [boostTarget, setBoostTarget] = useState('');
   const [boostIntensity, setBoostIntensity] = useState(50);
   const [simulatedGenre, setSimulatedGenre] = useState<'comedy' | 'dance' | 'food' | 'music'>('comedy');
 
-  // Handle recommendation weight slider changes
   const handleWeightChange = (key: keyof typeof recommendationWeights, value: number) => {
     setWeights({ [key]: value });
   };
@@ -32,7 +29,6 @@ export const FeedControlPage: React.FC = () => {
   const handleApplyWeights = () => {
     toast.success("POPLI algorithm recommendation weights injected successfully!", {
       icon: '🧠',
-      style: { background: '#0C0D0E', color: '#0ea5e9', border: '1px solid #0ea5e9/20' }
     });
   };
 
@@ -45,22 +41,21 @@ export const FeedControlPage: React.FC = () => {
     setBoostTarget('');
   };
 
-  // Get simulated reels matching the selected genre for the visual feed simulation preview
   const simulatedFeed = reels
     .filter(r => r.category === simulatedGenre)
     .slice(0, 4);
 
   return (
-    <div className="space-y-6 font-mono relative text-[10px] text-slate-600 uppercase select-none">
-      {/* 🚀 Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-[#BAE6FD] pb-4 gap-4">
+    <div className="space-y-6 font-mono relative text-[10px] text-muted-foreground uppercase select-none">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-border pb-4 gap-4">
         <div>
-          <h1 className="text-xl font-extrabold uppercase tracking-wider text-[#0C4A6E]">Feed Control Center</h1>
-          <p className="text-slate-500 text-[10px] uppercase mt-1">Operational command panel for POPLI viral acceleration loops</p>
+          <h1 className="text-xl font-extrabold uppercase tracking-wider text-foreground">Feed Control Center</h1>
+          <p className="text-muted-foreground text-[10px] uppercase mt-1">Operational command panel for POPLI viral acceleration loops</p>
         </div>
 
         {/* Sub tabs */}
-        <div className="flex bg-[#FFFFFF] border border-[#BAE6FD] p-0.5 rounded-[2px] self-stretch sm:self-auto select-none">
+        <div className="flex bg-card border border-border p-0.5 rounded-[2px] self-stretch sm:self-auto select-none">
           {([
             { id: 'recommender', label: 'RECOMMENDER MODULE' },
             { id: 'simulation', label: 'FEED SIMULATOR' },
@@ -72,8 +67,8 @@ export const FeedControlPage: React.FC = () => {
               className={cn(
                 "px-3 py-1.5 text-[9px] font-bold tracking-wider transition-colors rounded-[1px] uppercase",
                 activeSubTab === tab.id 
-                  ? "bg-[#0ea5e9] text-black" 
-                  : "text-slate-600 hover:text-[#0C4A6E]"
+                  ? "bg-primary text-primary-foreground" 
+                  : "text-muted-foreground hover:text-foreground"
               )}
             >
               {tab.label}
@@ -85,8 +80,8 @@ export const FeedControlPage: React.FC = () => {
       {activeSubTab === 'recommender' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Sliders panel */}
-          <div className="bg-[#FFFFFF] border border-[#BAE6FD] p-5 rounded-[2px] lg:col-span-2 space-y-5">
-            <span className="text-xs font-extrabold uppercase tracking-widest block text-[#0C4A6E]">RECOMMENDATION COEFFICIENTS</span>
+          <div className="bg-card border border-border p-5 rounded-[2px] lg:col-span-2 space-y-5">
+            <span className="text-xs font-extrabold uppercase tracking-widest block text-foreground">RECOMMENDATION COEFFICIENTS</span>
             
             <div className="space-y-5">
               {[
@@ -101,11 +96,11 @@ export const FeedControlPage: React.FC = () => {
                 return (
                   <div key={slider.key} className="space-y-2">
                     <div className="flex justify-between items-center text-[10px] font-bold">
-                      <span className="flex items-center gap-1.5 text-[#0C4A6E]">
-                        <Icon className="w-4 h-4 text-[#0ea5e9]" />
+                      <span className="flex items-center gap-1.5 text-foreground">
+                        <Icon className="w-4 h-4 text-primary" />
                         {slider.label}
                       </span>
-                      <span className="text-[#0ea5e9] font-mono">{value}%</span>
+                      <span className="text-primary font-mono">{value}%</span>
                     </div>
                     <div className="flex gap-4 items-center">
                       <input
@@ -114,10 +109,10 @@ export const FeedControlPage: React.FC = () => {
                         max={slider.max}
                         value={value}
                         onChange={(e) => handleWeightChange(slider.key as keyof typeof recommendationWeights, parseInt(e.target.value))}
-                        className="flex-1 h-1 bg-[#F0F9FF] rounded-lg appearance-none cursor-pointer accent-[#0ea5e9] border border-[#BAE6FD]"
+                        className="flex-1 h-1 bg-muted rounded-lg appearance-none cursor-pointer accent-primary border border-border"
                       />
                     </div>
-                    <span className="text-slate-400 text-[8px] block font-normal leading-none">{slider.desc}</span>
+                    <span className="text-muted-foreground text-[8px] block font-normal leading-none">{slider.desc}</span>
                   </div>
                 );
               })}
@@ -125,16 +120,16 @@ export const FeedControlPage: React.FC = () => {
 
             <button
               onClick={handleApplyWeights}
-              className="w-full h-10 bg-[#0ea5e9] text-black font-extrabold rounded-[1px] hover:bg-[#b5e000] transition-colors font-mono tracking-widest text-xs uppercase"
+              className="w-full h-10 bg-primary text-primary-foreground font-extrabold rounded-[1px] hover:bg-primary/90 transition-colors font-mono tracking-widest text-xs uppercase"
             >
               INJECT ALGORITHMIC WEIGHTS INTO CORE ENGINE
             </button>
           </div>
 
           {/* score card */}
-          <div className="bg-[#FFFFFF] border border-[#BAE6FD] p-5 rounded-[2px] flex flex-col justify-between">
+          <div className="bg-card border border-border p-5 rounded-[2px] flex flex-col justify-between">
             <div>
-              <span className="text-xs font-extrabold uppercase tracking-widest block text-[#0C4A6E] mb-4">RECOMMENDER SCORE CARD</span>
+              <span className="text-xs font-extrabold uppercase tracking-widest block text-foreground mb-4">RECOMMENDER SCORE CARD</span>
               
               <div className="space-y-4">
                 {[
@@ -143,16 +138,16 @@ export const FeedControlPage: React.FC = () => {
                   { title: 'Mood retention ratio', value: '84.2%', desc: 'Creators hook loop coefficient' },
                   { title: 'Local proximity loops', value: '9,203 active', desc: 'Hyperlocal city connections' }
                 ].map((score, i) => (
-                  <div key={i} className="p-3 bg-[#F0F9FF] border border-[#BAE6FD] rounded-[2px]">
-                    <span className="text-slate-500 block leading-none">{score.title}</span>
-                    <span className="text-[#0ea5e9] text-sm font-black mt-1.5 block tracking-tight">{score.value}</span>
-                    <span className="text-slate-400 text-[8px] font-normal block mt-1 leading-none">{score.desc}</span>
+                  <div key={i} className="p-3 bg-muted border border-border rounded-[2px]">
+                    <span className="text-muted-foreground block leading-none">{score.title}</span>
+                    <span className="text-primary text-sm font-black mt-1.5 block tracking-tight">{score.value}</span>
+                    <span className="text-muted-foreground text-[8px] font-normal block mt-1 leading-none">{score.desc}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="flex items-center gap-1.5 bg-emerald-50/20 border border-emerald-100 text-emerald-700 font-bold uppercase px-3 py-1.5 rounded-[1px] mt-4">
+            <div className="flex items-center gap-1.5 bg-success/10 border border-success/30 text-success font-bold uppercase px-3 py-1.5 rounded-[1px] mt-4">
               <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
               <span>ALGO SHIELD STATUS: SECURED</span>
             </div>
@@ -163,11 +158,11 @@ export const FeedControlPage: React.FC = () => {
       {activeSubTab === 'simulation' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Simulation controller */}
-          <div className="bg-[#FFFFFF] border border-[#BAE6FD] p-5 rounded-[2px] space-y-4">
-            <span className="text-xs font-extrabold uppercase tracking-widest block text-[#0C4A6E]">SIMULATE ACTIVE PIPELINE</span>
+          <div className="bg-card border border-border p-5 rounded-[2px] space-y-4">
+            <span className="text-xs font-extrabold uppercase tracking-widest block text-foreground">SIMULATE ACTIVE PIPELINE</span>
             
             <div className="space-y-2.5">
-              <span className="text-slate-500 block">SELECT GENRE INJECTOR:</span>
+              <span className="text-muted-foreground block">SELECT GENRE INJECTOR:</span>
               <div className="grid grid-cols-2 gap-2 text-[9px] font-bold">
                 {([
                   { id: 'comedy', label: 'COMEDY SHORTS' },
@@ -181,8 +176,8 @@ export const FeedControlPage: React.FC = () => {
                     className={cn(
                       "h-9 px-3 transition-colors rounded-[1px] border uppercase",
                       simulatedGenre === genre.id 
-                        ? "bg-[#0ea5e9] text-black font-extrabold" 
-                        : "hover:bg-[#F0F9FF] hover:text-[#0ea5e9] text-slate-600 border-[#BAE6FD]"
+                        ? "bg-primary text-primary-foreground font-extrabold" 
+                        : "hover:bg-muted hover:text-primary text-muted-foreground border-border"
                     )}
                   >
                     {genre.label}
@@ -191,9 +186,9 @@ export const FeedControlPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="p-4 bg-[#F0F9FF] border border-[#BAE6FD] rounded-[2px] space-y-1 mt-4 text-[9px] font-normal leading-normal">
-              <div className="flex gap-1.5 items-center font-bold text-[#0C4A6E] mb-1.5 uppercase">
-                <Sparkles className="w-3.5 h-3.5 text-[#0ea5e9]" /> ALGO EXPLAINER
+            <div className="p-4 bg-muted border border-border rounded-[2px] space-y-1 mt-4 text-[9px] font-normal leading-normal">
+              <div className="flex gap-1.5 items-center font-bold text-foreground mb-1.5 uppercase">
+                <Sparkles className="w-3.5 h-3.5 text-primary" /> ALGO EXPLAINER
               </div>
               <p>Injected genre sets prioritizations on feed pipelines.</p>
               <p className="mt-1">Hyperlocal creators within 15km of viewer node get +20% boost acceleration coefficients.</p>
@@ -201,25 +196,25 @@ export const FeedControlPage: React.FC = () => {
           </div>
 
           {/* Visual simulation preview grid */}
-          <div className="bg-[#FFFFFF] border border-[#BAE6FD] p-5 rounded-[2px] lg:col-span-2 space-y-4">
-            <span className="text-xs font-extrabold uppercase tracking-widest block text-[#0C4A6E]">FEED SIMULATOR PREVIEW</span>
+          <div className="bg-card border border-border p-5 rounded-[2px] lg:col-span-2 space-y-4">
+            <span className="text-xs font-extrabold uppercase tracking-widest block text-foreground">FEED SIMULATOR PREVIEW</span>
             
             <div className="grid grid-cols-2 gap-4">
               {simulatedFeed.map((reel) => (
-                <div key={reel.id} className="p-3 bg-[#F0F9FF] border border-[#BAE6FD] rounded-[1px] flex flex-col justify-between gap-3">
+                <div key={reel.id} className="p-3 bg-muted border border-border rounded-[1px] flex flex-col justify-between gap-3">
                   <div className="flex justify-between items-start">
                     <div className="max-w-[140px] truncate">
-                      <span className="text-[#0C4A6E] font-extrabold block truncate">{reel.title}</span>
-                      <span className="text-slate-500 font-normal block mt-0.5 truncate leading-none select-all lowercase">@{reel.creatorUsername}</span>
+                      <span className="text-foreground font-extrabold block truncate">{reel.title}</span>
+                      <span className="text-muted-foreground font-normal block mt-0.5 truncate leading-none select-all lowercase">@{reel.creatorUsername}</span>
                     </div>
-                    <span className="bg-[#E0F2FE] border border-[#BAE6FD] text-[#0ea5e9] text-[8px] font-black px-1.5 py-0.5 uppercase rounded-[1px] font-mono leading-none">
+                    <span className="bg-accent border border-border text-primary text-[8px] font-black px-1.5 py-0.5 uppercase rounded-[1px] font-mono leading-none">
                       {reel.category}
                     </span>
                   </div>
                   
                   {/* Stats line */}
-                  <div className="flex justify-between items-center border-t border-[#BAE6FD] pt-2 text-[8px] text-slate-500 font-mono">
-                    <span>VIEWS: <span className="text-[#0C4A6E] font-bold">{reel.views.toLocaleString()}</span></span>
+                  <div className="flex justify-between items-center border-t border-border pt-2 text-[8px] text-muted-foreground font-mono">
+                    <span>VIEWS: <span className="text-foreground font-bold">{reel.views.toLocaleString()}</span></span>
                   </div>
                 </div>
               ))}
@@ -231,12 +226,12 @@ export const FeedControlPage: React.FC = () => {
       {activeSubTab === 'boost' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Boost input form */}
-          <div className="bg-[#FFFFFF] border border-[#BAE6FD] p-5 rounded-[2px] space-y-4">
-            <span className="text-xs font-extrabold uppercase tracking-widest block text-[#0C4A6E]">BOOST SLOT MANAGER</span>
+          <div className="bg-card border border-border p-5 rounded-[2px] space-y-4">
+            <span className="text-xs font-extrabold uppercase tracking-widest block text-foreground">BOOST SLOT MANAGER</span>
             
             <form onSubmit={handleTriggerBoost} className="space-y-4">
               <div className="space-y-1.5">
-                <span className="text-slate-500 block pl-0.5">SELECT VECTOR TARGET:</span>
+                <span className="text-muted-foreground block pl-0.5">SELECT VECTOR TARGET:</span>
                 <div className="grid grid-cols-3 gap-2 text-[9px] font-bold">
                   {([
                     { id: 'hashtag', label: '#HASHTAG' },
@@ -250,8 +245,8 @@ export const FeedControlPage: React.FC = () => {
                       className={cn(
                         "h-9 px-1 transition-colors rounded-[1px] border uppercase",
                         boostType === type.id 
-                          ? "bg-[#0ea5e9] text-black font-extrabold" 
-                          : "hover:bg-[#F0F9FF] hover:text-[#0ea5e9] text-slate-600 border-[#BAE6FD]"
+                          ? "bg-primary text-primary-foreground font-extrabold" 
+                          : "hover:bg-muted hover:text-primary text-muted-foreground border-border"
                       )}
                     >
                       {type.label}
@@ -261,21 +256,21 @@ export const FeedControlPage: React.FC = () => {
               </div>
 
               <div className="space-y-1.5">
-                <span className="text-slate-500 block pl-0.5">INJECT VECTOR TARGET ID:</span>
+                <span className="text-muted-foreground block pl-0.5">INJECT VECTOR TARGET ID:</span>
                 <input
                   type="text"
                   required
                   placeholder={boostType === 'hashtag' ? "e.g., #DiwaliStar" : (boostType === 'category' ? "e.g., comedy" : "e.g., @poojapatel")}
                   value={boostTarget}
                   onChange={(e) => setBoostTarget(e.target.value)}
-                  className="w-full h-10 bg-[#F0F9FF] border border-[#BAE6FD] rounded-[2px] px-3 text-xs text-[#0C4A6E] uppercase outline-none focus:border-[#0ea5e9] transition-colors"
+                  className="w-full h-10 bg-muted border border-border rounded-[2px] px-3 text-xs text-foreground uppercase outline-none focus:border-primary transition-colors"
                 />
               </div>
 
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-[9px] font-bold">
                   <span>INJECTION COEFFICIENT VELOCITY:</span>
-                  <span className="text-[#0ea5e9] font-mono">{boostIntensity}%</span>
+                  <span className="text-primary font-mono">{boostIntensity}%</span>
                 </div>
                 <input
                   type="range"
@@ -283,13 +278,13 @@ export const FeedControlPage: React.FC = () => {
                   max="100"
                   value={boostIntensity}
                   onChange={(e) => setBoostIntensity(parseInt(e.target.value))}
-                  className="w-full h-1 bg-[#F0F9FF] rounded-lg appearance-none cursor-pointer accent-[#0ea5e9] border border-[#BAE6FD]"
+                  className="w-full h-1 bg-muted rounded-lg appearance-none cursor-pointer accent-primary border border-border"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full h-10 bg-[#0ea5e9] text-black font-extrabold rounded-[1px] hover:bg-[#b5e000] transition-all uppercase tracking-wider text-xs font-mono flex items-center justify-center gap-2 active:scale-95"
+                className="w-full h-10 bg-primary text-primary-foreground font-extrabold rounded-[1px] hover:bg-primary/90 transition-all uppercase tracking-wider text-xs font-mono flex items-center justify-center gap-2 active:scale-95"
               >
                 <Zap className="w-3.5 h-3.5 fill-current" />
                 <span>FIRE BOOST VECTOR INJECTOR</span>
@@ -298,8 +293,8 @@ export const FeedControlPage: React.FC = () => {
           </div>
 
           {/* Active boost queues list */}
-          <div className="bg-[#FFFFFF] border border-[#BAE6FD] p-5 rounded-[2px] lg:col-span-2 space-y-4">
-            <span className="text-xs font-extrabold uppercase tracking-widest block text-[#0C4A6E]">ACTIVE BOOSTED CHANNELS</span>
+          <div className="bg-card border border-border p-5 rounded-[2px] lg:col-span-2 space-y-4">
+            <span className="text-xs font-extrabold uppercase tracking-widest block text-foreground">ACTIVE BOOSTED CHANNELS</span>
             
             <div className="space-y-3">
               {[
@@ -307,14 +302,14 @@ export const FeedControlPage: React.FC = () => {
                 { label: '#DiwaliSparkChallenge 🪔', rate: '85%', type: 'HASHTAG BOOSTED', speed: 'HIGH ACCELERATION' },
                 { label: 'COMEDY SHORTS GENRE 🎭', rate: '65%', type: 'GENRE OVERRIDE', speed: 'STABLE INJECTION' }
               ].map((boost, idx) => (
-                <div key={idx} className="p-3 bg-[#F0F9FF] border border-[#BAE6FD] rounded-[1px] flex justify-between items-center">
+                <div key={idx} className="p-3 bg-muted border border-border rounded-[1px] flex justify-between items-center">
                   <div>
-                    <span className="text-[#0C4A6E] font-extrabold tracking-wide text-xs block">{boost.label}</span>
-                    <span className="text-slate-500 text-[8px] font-normal block mt-1">{boost.type}</span>
+                    <span className="text-foreground font-extrabold tracking-wide text-xs block">{boost.label}</span>
+                    <span className="text-muted-foreground text-[8px] font-normal block mt-1">{boost.type}</span>
                   </div>
                   <div className="text-right">
-                    <span className="text-[#0ea5e9] font-mono font-black text-xs block">{boost.rate} BOOST</span>
-                    <span className="text-slate-400 text-[8px] font-normal block mt-1">{boost.speed}</span>
+                    <span className="text-primary font-mono font-black text-xs block">{boost.rate} BOOST</span>
+                    <span className="text-muted-foreground text-[8px] font-normal block mt-1">{boost.speed}</span>
                   </div>
                 </div>
               ))}
