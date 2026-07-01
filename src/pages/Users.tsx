@@ -258,7 +258,7 @@ export const UsersPage: React.FC = () => {
                     <td className="p-3 text-foreground">
                       <div className="flex items-center gap-1.5 font-normal font-mono">
                         <MapPin className="w-3.5 h-3.5 text-muted-foreground/60 shrink-0" />
-                        <span>{creator.city}, {creator.state}</span>
+                      <span>{[creator.city, creator.state].filter(Boolean).join(', ') || '—'}</span>
                       </div>
                     </td>
 
