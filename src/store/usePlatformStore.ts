@@ -11,10 +11,12 @@ export interface Creator {
   followers: number;
   following: number;
   totalLikes: number;
+  totalViews?: number;
   coinsEarned: number;
   videoCount: number;
   status: 'active' | 'suspended' | 'shadow_banned';
   isVerified: boolean;
+  isMonetized?: boolean;
   earningsFrozen: boolean;
   registrationDate: string;
   lastActive: string;
@@ -44,6 +46,8 @@ export interface Reel {
   musicName?: string;
   location?: string;
   taggedUsers?: Array<{ id: string; username: string }>;
+  pendingEarningsViews?: number;
+  challengeApprovalStatus?: string;
 }
 
 export interface Transaction {
@@ -121,6 +125,7 @@ interface PlatformState {
   reports: ModerationReport[];
   tickets: SupportTicket[];
   gifts: Gift[];
+  dashboardStats: any;
   
   // Platform Controls
   recommendationWeights: {
@@ -189,6 +194,7 @@ const DEFAULT_STATE = () => ({
   reports: [],
   tickets: [],
   gifts: initialGifts,
+  dashboardStats: null,
   recommendationWeights: {
     watchTimeWeight: 45,
     shareWeight: 25,
@@ -211,7 +217,7 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
 
   fetchAllData: async () => {
     try {
-    const [users, reels, txs, reports, tickets, fetchedGifts, withdrawals] = await Promise.all([
+    const [users, reels, txs, reports, tickets, fetchedGifts, withdrawals, dashboardStats] = await Promise.all([
         adminService.getUsers().catch(() => []),
         adminService.getReels().catch(() => []),
         adminService.getTransactions().catch(() => []),
@@ -219,6 +225,7 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
         adminService.getTickets().catch(() => []),
         adminService.getGifts().catch(() => []),
         adminService.getWithdrawals().catch(() => []),
+        adminService.getDashboardStats().catch(() => null),
       ]);
 
       const mappedCreators = users.map((u: any) => ({
@@ -231,10 +238,12 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
         followers: u.followersCount || 0,
         following: u.followingCount || 0,
         totalLikes: u.totalLikesReceived || 0,
+        totalViews: u.reels?.reduce((sum: number, r: any) => sum + (r.viewsCount || 0), 0) || 0,
         coinsEarned: 0,
-        videoCount: 0,
+        videoCount: u._count?.reels || 0,
         status: u.isBlocked ? 'suspended' : 'active',
         isVerified: u.isVerified || false,
+        isMonetized: true,
         earningsFrozen: false,
         registrationDate: u.createdAt,
         lastActive: u.updatedAt
@@ -253,14 +262,16 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
         commentsCount: r.commentsCount || 0,
         city: r.city || 'Unknown',
         category: r.category || 'vlog',
-        isTrending: false,
-        isHidden: false,
+        isTrending: r.viewsCount > 1000 || r.likesCount > 100,
+        isHidden: r.privacy === 'Private',
         copyrightFlag: false,
-        reported: false,
-        commentsDisabled: false,
+        reported: r.reports && r.reports.length > 0,
+        commentsDisabled: !r.allowComments,
         ageRestricted: false,
         uploadDate: r.createdAt,
-        videoUrl: r.mediaUrl || "https://assets.mixkit.co/videos/preview/mixkit-girl-in-neon-sign-holding-a-camera-40742-large.mp4"
+        videoUrl: r.mediaUrl || "https://assets.mixkit.co/videos/preview/mixkit-girl-in-neon-sign-holding-a-camera-40742-large.mp4",
+        pendingEarningsViews: r.pendingEarningsViews || 0,
+        challengeApprovalStatus: r.challengeApprovalStatus || 'PENDING'
       }));
 
     const mappedTxs = txs.map((t: any) => ({
@@ -327,7 +338,8 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
         transactions: [...mappedTxs, ...mappedWithdrawals],
         reports: mappedReports,
         tickets: mappedTickets,
-        gifts: mappedGifts.length > 0 ? mappedGifts : state.gifts
+        gifts: mappedGifts.length > 0 ? mappedGifts : state.gifts,
+        dashboardStats: dashboardStats || state.dashboardStats
       }));
     } catch (error) {
       console.error('Failed to fetch admin data', error);
@@ -402,6 +414,17 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
     }));
   },
   
+  toggleMonetization: async (userId: string) => {
+    try {
+      await adminService.toggleUserMonetization(userId);
+      set((state) => ({
+        creators: state.creators.map(c => c.id === userId ? { ...c, isMonetized: !c.isMonetized } : c)
+      }));
+    } catch (error) {
+      console.error('Failed to toggle monetization', error);
+    }
+  },
+
   updateCoinRates: (rates) => set((state) => ({
     coinRateSettings: { ...state.coinRateSettings, ...rates }
   })),

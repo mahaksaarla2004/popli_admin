@@ -28,79 +28,31 @@ import {
 import { cn } from '@/utils/cn';
 
 export const DashboardPage: React.FC = () => {
-  const { creators, reels } = usePlatformStore();
+  const { creators, reels, dashboardStats } = usePlatformStore();
   const [activeTab, setActiveTab] = useState<'overview' | 'live' | 'growth'>('overview');
-  const [liveEvents, setLiveEvents] = useState<Array<{ id: string; text: string; time: string; type: string }>>([]);
 
-  // Generate some historical data for charts
-  const userGrowthData = [
-    { name: 'Jan', Users: 12000, active: 8000 },
-    { name: 'Feb', Users: 24000, active: 15000 },
-    { name: 'Mar', Users: 45000, active: 31000 },
-    { name: 'Apr', Users: 78000, active: 55000 },
-    { name: 'May', Users: 112000, active: 84000 }
+  const userGrowthData = dashboardStats?.userGrowthData || [
+    { name: 'Jan', Users: 0, active: 0 }
   ];
 
-  const engagementData = [
-    { name: 'Comedy', uploads: 85, views: 420 },
-    { name: 'Dance', uploads: 62, views: 310 },
-    { name: 'Vlogs', uploads: 45, views: 180 },
-    { name: 'Food', uploads: 38, views: 140 },
-    { name: 'Music', uploads: 51, views: 290 },
-    { name: 'Tech', uploads: 29, views: 95 }
+  const engagementData = dashboardStats?.engagementData || [
+    { name: 'None', uploads: 0, views: 0 }
   ];
 
-  const moodPieData = [
-    { name: 'Joy/Comedy', value: 40, color: '#0ea5e9' },
-    { name: 'Excitement', value: 25, color: '#00D8F6' },
-    { name: 'Emotional', value: 15, color: '#FF7C00' },
-    { name: 'Patriotic', value: 12, color: '#FF2A00' },
-    { name: 'Relaxed', value: 8, color: '#7E8A9F' }
+  const moodPieData = dashboardStats?.moodPieData || [
+    { name: 'Data Pending', value: 100, color: '#7E8A9F' }
   ];
 
-  // Simulated live event feed
-  useEffect(() => {
-    // Initial feed
-    const initialEvents = [
-      { id: '1', text: 'Amit Sharma received an Lion Hunt gift in Bengaluru 🦁', time: 'Just now', type: 'gift' },
-      { id: '2', text: 'Pooja Patil uploaded a new comedy reel in Pune 🎬', time: '1 min ago', type: 'upload' },
-      { id: '3', text: 'Viral spike detected on #DiwaliStar in Indore 🚀', time: '3 min ago', type: 'viral' },
-      { id: '4', text: 'Vikram Singh requested withdrawal of 12,500 coins', time: '5 min ago', type: 'finance' }
-    ];
-    setLiveEvents(initialEvents);
+  const liveEvents = dashboardStats?.liveEvents || [];
 
-    const eventInterval = setInterval(() => {
-      const fn = ['Aarav', 'Diya', 'Rohan', 'Sneha', 'Karan', 'Meera', 'Sachin', 'Divya'][Math.floor(Math.random() * 8)];
-      const ln = ['Sharma', 'Reddy', 'Patel', 'Nair', 'Singh', 'Patil', 'Gupta', 'Roy'][Math.floor(Math.random() * 8)];
-      const city = ['Mumbai', 'Delhi', 'Lucknow', 'Jaipur', 'Indore', 'Madurai', 'Bengaluru'][Math.floor(Math.random() * 7)];
-      const giftName = ['Rose 🌹', 'Crown 👑', 'Rocket 🚀', 'Fire 🔥', 'Diamond 💎'][Math.floor(Math.random() * 5)];
-      
-      const rand = Math.random();
-      let eventText = '';
-      let type = '';
-      
-      if (rand < 0.3) {
-        eventText = `${fn} ${ln} received a ${giftName} gift in ${city}`;
-        type = 'gift';
-      } else if (rand < 0.6) {
-        eventText = `${fn} ${ln} uploaded a new ${['comedy', 'dance', 'food', 'vlog'][Math.floor(Math.random() * 4)]} reel in ${city} 🎬`;
-        type = 'upload';
-      } else if (rand < 0.8) {
-        eventText = `New viral alert for ${fn}'s video in ${city} (Viral Score: ${Math.floor(Math.random() * 20) + 80}%)`;
-        type = 'viral';
-      } else {
-        eventText = `${fn} ${ln} registered as a new creator from ${city} 🎉`;
-        type = 'user';
-      }
+  const hyperlocalData = dashboardStats?.hyperlocalData || [
+    { city: 'PENDING', uploads: '0 uploads', views: '0 views', heat: 'bg-green-500' }
+  ];
 
-      setLiveEvents(prev => [
-        { id: Math.random().toString(), text: eventText, time: 'Just now', type },
-        ...prev.slice(0, 9)
-      ]);
-    }, 4000);
+  const heatIndicators = dashboardStats?.heatIndicators || [
+    { label: 'Data Pending', percent: '0%', desc: 'Waiting for server...', color: 'bg-muted' }
+  ];
 
-    return () => clearInterval(eventInterval);
-  }, []);
 
   // Summary counts
   const totalUsersCount = creators.length;
@@ -280,14 +232,7 @@ export const DashboardPage: React.FC = () => {
           <div className="bg-card border border-border p-5 rounded-2xl flex flex-col justify-between h-[400px] shadow-sm">
             <span className="text-xs font-extrabold uppercase tracking-widest block mb-4 font-mono text-foreground">HYPERLOCAL INJECTOR VOLUME</span>
             <div className="space-y-3 flex-1 overflow-y-auto pr-1 text-[10px] uppercase font-bold text-muted-foreground font-mono">
-              {[
-                { city: 'MUMBAI CENTRAL', uploads: '45 uploads/hr', views: '2.4M views', heat: 'bg-red-500' },
-                { city: 'DELHI NCR', uploads: '38 uploads/hr', views: '1.9M views', heat: 'bg-red-500' },
-                { city: 'BENGALURU TECH', uploads: '29 uploads/hr', views: '1.1M views', heat: 'bg-orange-500' },
-                { city: 'LUCKNOW NAWABI', uploads: '22 uploads/hr', views: '840K views', heat: 'bg-yellow-500' },
-                { city: 'JAIPUR PINK', uploads: '18 uploads/hr', views: '650K views', heat: 'bg-green-500' },
-                { city: 'INDORE ACTIVE', uploads: '15 uploads/hr', views: '490K views', heat: 'bg-green-500' }
-              ].map((item, idx) => (
+              {hyperlocalData.map((item: any, idx: number) => (
                 <div key={idx} className="p-3 bg-muted/40 border border-border rounded-xl flex justify-between items-center hover:border-primary/20 transition-colors">
                   <div>
                     <span className="text-foreground tracking-wide block">{item.city}</span>
@@ -330,12 +275,7 @@ export const DashboardPage: React.FC = () => {
           <div className="bg-card border border-border p-5 rounded-2xl space-y-4 shadow-sm">
             <span className="text-xs font-extrabold uppercase tracking-widest block font-mono text-foreground">Platform Heat indicators</span>
             <div className="space-y-4 pt-2">
-              {[
-                { label: 'Platform load capacity', percent: '42%', desc: 'Safe limits active', color: 'bg-primary' },
-                { label: 'Recommender acceleration', percent: '88%', desc: 'Hyper-loops injecting feeds', color: 'bg-secondary' },
-                { label: 'Withdrawal queue clearing', percent: '95%', desc: 'Payout systems clearance high', color: 'bg-emerald-500' },
-                { label: 'Moderator actions execution', percent: '76%', desc: 'High risk queues need clearance', color: 'bg-amber-500' }
-              ].map((item, idx) => (
+              {heatIndicators.map((item: any, idx: number) => (
                 <div key={idx} className="space-y-1.5 uppercase font-bold text-[10px] font-mono">
                   <div className="flex justify-between items-center text-muted-foreground">
                     <span>{item.label}</span>

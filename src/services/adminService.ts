@@ -77,5 +77,10 @@ getTransactions: async () => {
   deleteGift: async (giftId: string) => {
     const res = await apiClient.delete(`/admin/gifts/${giftId}`);
     return res.data;
+  },
+
+  toggleUserMonetization: async (userId: string) => {
+    const res = await apiClient.patch(`/admin/users/${userId}/monetization`);
+    return res.data;
   }
 };

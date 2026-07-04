@@ -24,7 +24,8 @@ export const UsersPage: React.FC = () => {
     verifyUser, 
     removeVerification, 
     shadowBanUser, 
-    freezeEarnings 
+    freezeEarnings,
+    toggleMonetization
   } = usePlatformStore();
 
   // Search & Filter local states
@@ -60,17 +61,18 @@ export const UsersPage: React.FC = () => {
   const handleVerify = (creator: Creator) => {
     if (creator.isVerified) {
       removeVerification(creator.id);
-      toast.success(`Removed verification badge from @${creator.username}`);
+      toast('Verification Badge Stripped', { icon: '🛡️' });
     } else {
       verifyUser(creator.id);
-      toast.success(`Creator @${creator.username} verified successfully!`, {
-        icon: '👑'
-      });
+      toast.success('Creator Verified Successfully', { icon: '👑' });
     }
-    // Sync drawer
-    if (selectedCreator?.id === creator.id) {
-      setSelectedCreator(prev => prev ? { ...prev, isVerified: !prev.isVerified } : null);
-    }
+    setSelectedCreator(prev => prev ? { ...prev, isVerified: !prev.isVerified } : null);
+  };
+
+  const handleToggleMonetization = async (creator: Creator) => {
+    await toggleMonetization(creator.id);
+    toast.success(`Monetization ${creator.isMonetized ? 'disabled' : 'enabled'} for @${creator.username}`, { icon: '💰' });
+    setSelectedCreator(prev => prev ? { ...prev, isMonetized: !prev.isMonetized } : null);
   };
 
   const handleShadowBan = (creator: Creator) => {
@@ -367,10 +369,11 @@ export const UsersPage: React.FC = () => {
               </div>
 
               {/* Stats overview widgets */}
-              <div className="grid grid-cols-3 gap-2.5 mb-6 font-mono">
+              <div className="grid grid-cols-4 gap-2.5 mb-6 font-mono">
                 {[
                   { label: 'Followers', value: selectedCreator.followers.toLocaleString(), color: 'text-foreground' },
                   { label: 'Likes', value: selectedCreator.totalLikes.toLocaleString(), color: 'text-foreground' },
+                  { label: 'Views', value: (selectedCreator.totalViews || 0).toLocaleString(), color: 'text-foreground' },
                   { label: 'Coins', value: selectedCreator.coinsEarned.toLocaleString(), color: 'text-primary' }
                 ].map((stat, i) => (
                   <div key={i} className="p-3 bg-muted/40 border border-border rounded-xl text-center">
@@ -424,6 +427,20 @@ export const UsersPage: React.FC = () => {
                   >
                     <Coins className="w-3.5 h-3.5 shrink-0" />
                     <span>{selectedCreator.earningsFrozen ? "DEFROST COINS" : "FREEZE WALLET"}</span>
+                  </button>
+
+                  {/* Monetization Toggle */}
+                  <button
+                    onClick={() => handleToggleMonetization(selectedCreator)}
+                    className={cn(
+                      "h-10 px-3 transition-all rounded-xl border uppercase flex items-center gap-2.5 active:scale-95 shadow-sm",
+                      selectedCreator.isMonetized 
+                        ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/20" 
+                        : "bg-muted text-muted-foreground hover:bg-muted/80 border-border"
+                    )}
+                  >
+                    <Coins className="w-3.5 h-3.5 shrink-0" />
+                    <span>{selectedCreator.isMonetized ? "DEMONETIZE" : "MONETIZE"}</span>
                   </button>
 
                   {/* Shadow ban */}

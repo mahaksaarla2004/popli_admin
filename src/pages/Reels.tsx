@@ -116,7 +116,7 @@ export const ReelsPage: React.FC = () => {
       reel.city.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesGlobalCity = cityFilter === 'all' || reel.city.toLowerCase() === cityFilter.toLowerCase();
-    const matchesCategory = categoryFilter === 'all' || reel.category === categoryFilter;
+    const matchesCategory = categoryFilter === 'all' || (reel.category || '').toLowerCase() === categoryFilter.toLowerCase();
 
     let matchesStatus = true;
     if (statusFilter === 'trending') matchesStatus = reel.isTrending;
@@ -218,12 +218,12 @@ export const ReelsPage: React.FC = () => {
               </thead>
               <tbody className="divide-y divide-border">
                 {filteredReels.slice(0, 15).map((reel) => (
-                  <tr key={reel.id} className="hover:bg-muted/40 transition-colors">
+                  <tr key={reel.id} onClick={() => setSelectedReel(reel)} className="hover:bg-muted/40 transition-colors cursor-pointer">
                     {/* Caption details */}
                     <td className="p-3 pl-4">
                       <div className="flex items-center gap-3">
                         <button 
-                          onClick={() => setPreviewVideo(reel)}
+                          onClick={(e) => { e.stopPropagation(); setPreviewVideo(reel); }}
                           className="w-8 h-8 bg-accent border border-border flex items-center justify-center text-primary hover:bg-primary hover:text-primary-foreground hover:border-transparent transition-all shrink-0 active:scale-90"
                         >
                           <Play className="w-3.5 h-3.5 fill-current" />
@@ -451,6 +451,34 @@ export const ReelsPage: React.FC = () => {
                     </span>
                   </div>
                 ))}
+              </div>
+
+              {/* Monetization & Approval Calculations */}
+              <div className="bg-muted/30 border border-border p-3.5 rounded-[2px] mb-6 space-y-3">
+                <h4 className="font-extrabold text-foreground text-[10px] tracking-wider uppercase flex items-center gap-1.5 border-b border-border pb-2">
+                  <Flame className="w-3.5 h-3.5 text-primary" /> EARNINGS & APPROVAL ENGINE
+                </h4>
+                <div className="grid grid-cols-2 gap-3 font-mono">
+                  <div className="space-y-1 bg-background border border-border p-2 rounded-[2px]">
+                    <span className="text-[8px] text-muted-foreground uppercase block font-bold tracking-tight">Unprocessed Views</span>
+                    <span className="font-bold text-foreground text-sm">{selectedReel.pendingEarningsViews?.toLocaleString() || 0}</span>
+                  </div>
+                  <div className="space-y-1 bg-background border border-border p-2 rounded-[2px]">
+                    <span className="text-[8px] text-muted-foreground uppercase block font-bold tracking-tight">Est. Payout</span>
+                    <span className="font-bold text-emerald-500 text-sm">₹{((selectedReel.pendingEarningsViews || 0) * 0.005).toFixed(2)}</span>
+                  </div>
+                  <div className="space-y-1.5 col-span-2 bg-background border border-border p-2 rounded-[2px] flex justify-between items-center">
+                    <span className="text-[8px] text-muted-foreground uppercase font-bold tracking-tight">Challenge Approval</span>
+                    <span className={cn(
+                      "font-bold text-[9px] inline-flex px-2 py-0.5 rounded-[2px] border uppercase",
+                      selectedReel.challengeApprovalStatus === 'APPROVED' ? "bg-success/10 text-success border-success/30" :
+                      selectedReel.challengeApprovalStatus === 'REJECTED' ? "bg-destructive/10 text-destructive border-destructive/30" :
+                      "bg-warning/10 text-warning border-warning/30"
+                    )}>
+                      {selectedReel.challengeApprovalStatus || 'PENDING'}
+                    </span>
+                  </div>
+                </div>
               </div>
 
               {/* Operations Control Action Commands Console */}
