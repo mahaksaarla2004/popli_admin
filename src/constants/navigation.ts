@@ -4,7 +4,9 @@ import {
   Video, 
   Sliders, 
   Coins, 
-  Trophy
+  Trophy,
+  AlertTriangle,
+  HelpCircle
 } from 'lucide-react';
 import { UserRole } from '../types';
 
@@ -51,20 +53,6 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     icon: Trophy,
     roles: ['super_admin', 'marketing_admin'],
   },
-  /* 
-  --- HIDING DUMMY TABS FOR V1 LAUNCH ---
-  {
-    title: 'Security & Anti-Fraud',
-    path: '/fraud',
-    icon: ShieldAlert,
-    roles: ['super_admin', 'moderator'],
-  },
-  {
-    title: 'Campaigns & Notifications',
-    path: '/campaigns',
-    icon: Megaphone,
-    roles: ['super_admin', 'marketing_admin'],
-  },
   {
     title: 'Moderation Queue',
     path: '/moderation',
@@ -72,39 +60,9 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     roles: ['super_admin', 'moderator'],
   },
   {
-    title: 'Messaging Moderation',
-    path: '/messaging',
-    icon: MessageSquare,
-    roles: ['super_admin', 'moderator'],
-  },
-  {
-    title: 'Analytics & Intelligence',
-    path: '/analytics',
-    icon: BarChart3,
-    roles: ['super_admin', 'finance_admin', 'marketing_admin'],
-  },
-  {
-    title: 'Nearby Location Intel',
-    path: '/nearby',
-    icon: Map,
-  },
-  {
-    title: 'Staff Management',
-    path: '/staff',
-    icon: ShieldCheck,
-    roles: ['super_admin'],
-  },
-  {
     title: 'Customer Support',
     path: '/support',
     icon: HelpCircle,
     roles: ['super_admin', 'support_admin'],
-  },
-  {
-    title: 'System Settings',
-    path: '/settings',
-    icon: Settings,
-    roles: ['super_admin'],
   }
-  */
 ];

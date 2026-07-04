@@ -4,6 +4,7 @@ import { Coins, Check, X, Trash2, TrendingUp, Gift } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import toast from 'react-hot-toast';
 import { API_URL } from '../services/api';
+import { adminService } from '../services/adminService';
 
 export const MonetizationPage: React.FC = () => {
   const {
@@ -38,15 +39,9 @@ export const MonetizationPage: React.FC = () => {
     toast.success('POPLI coin-rupee economy re-calibrated!', { icon: '💰' });
   };
 
-   React.useEffect(() => {
-    fetchAllData();
-  }, []);
 
   React.useEffect(() => {
-    fetch(`${API_URL}/admin/configs`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-    })
-      .then(res => res.json())
+    adminService.getConfigs()
       .then(data => {
         if (data.REFERRAL_CREATOR_REWARD) setCreatorReward(data.REFERRAL_CREATOR_REWARD);
         if (data.REFERRAL_STANDARD_REWARD) setStandardReward(data.REFERRAL_STANDARD_REWARD);
@@ -56,12 +51,11 @@ export const MonetizationPage: React.FC = () => {
 
   const handleUpdateReferralRates = async (e: React.FormEvent) => {
     e.preventDefault();
-    const token = localStorage.getItem('token');
     try {
       await Promise.all([
-        fetch(`${API_URL}/admin/configs`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ key: 'REFERRAL_CREATOR_REWARD', value: creatorReward }) }),
-        fetch(`${API_URL}/admin/configs`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ key: 'REFERRAL_STANDARD_REWARD', value: standardReward }) }),
-        fetch(`${API_URL}/admin/configs`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ key: 'REFERRAL_SUPER_REWARD', value: superReward }) })
+        adminService.updateConfig('REFERRAL_CREATOR_REWARD', creatorReward),
+        adminService.updateConfig('REFERRAL_STANDARD_REWARD', standardReward),
+        adminService.updateConfig('REFERRAL_SUPER_REWARD', superReward)
       ]);
       toast.success('Referral Rewards Updated!', { icon: '🤝' });
     } catch (e) {

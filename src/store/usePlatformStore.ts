@@ -173,6 +173,7 @@ interface PlatformState {
   
   // Actions - Control Panel Sliders & Simulation
   setWeights: (weights: Partial<PlatformState['recommendationWeights']>) => void;
+  saveWeights: () => Promise<void>;
   toggleBotAttack: () => void;
   simulateLiveTicks: () => void;
   resetPlatformStore: () => void;
@@ -217,7 +218,7 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
 
   fetchAllData: async () => {
     try {
-    const [users, reels, txs, reports, tickets, fetchedGifts, withdrawals, dashboardStats] = await Promise.all([
+    const [users, reels, txs, reports, tickets, fetchedGifts, withdrawals, dashboardStats, configWeights, allConfigs] = await Promise.all([
         adminService.getUsers().catch(() => []),
         adminService.getReels().catch(() => []),
         adminService.getTransactions().catch(() => []),
@@ -226,6 +227,8 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
         adminService.getGifts().catch(() => []),
         adminService.getWithdrawals().catch(() => []),
         adminService.getDashboardStats().catch(() => null),
+        adminService.getFeedConfig().catch(() => null),
+        adminService.getConfigs().catch(() => ({})),
       ]);
 
       const mappedCreators = users.map((u: any) => ({
@@ -320,7 +323,7 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
         priority: 'medium',
         status: t.status.toLowerCase(),
         dateCreated: t.createdAt,
-        chatHistory: []
+        chatHistory: Array.isArray(t.chatHistory) ? t.chatHistory : []
       }));
 
       const mappedGifts = fetchedGifts.map((g: any) => ({
@@ -339,7 +342,9 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
         reports: mappedReports,
         tickets: mappedTickets,
         gifts: mappedGifts.length > 0 ? mappedGifts : state.gifts,
-        dashboardStats: dashboardStats || state.dashboardStats
+        dashboardStats: dashboardStats || state.dashboardStats,
+        recommendationWeights: configWeights || state.recommendationWeights,
+        coinRateSettings: allConfigs['COIN_RATE_SETTINGS'] || state.coinRateSettings
       }));
     } catch (error) {
       console.error('Failed to fetch admin data', error);
@@ -354,25 +359,40 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
     }));
   },
   
-  unbanUser: (userId) => set((state) => ({
-    creators: state.creators.map((c) => c.id === userId ? { ...c, status: 'active' } : c)
-  })),
+  unbanUser: async (userId) => {
+    await adminService.unbanUser(userId).catch(console.error);
+    set((state) => ({
+      creators: state.creators.map((c) => c.id === userId ? { ...c, status: 'active' } : c)
+    }));
+  },
   
-  verifyUser: (userId) => set((state) => ({
-    creators: state.creators.map((c) => c.id === userId ? { ...c, isVerified: true } : c)
-  })),
+  verifyUser: async (userId) => {
+    await adminService.verifyUser(userId).catch(console.error);
+    set((state) => ({
+      creators: state.creators.map((c) => c.id === userId ? { ...c, isVerified: true } : c)
+    }));
+  },
   
-  removeVerification: (userId) => set((state) => ({
-    creators: state.creators.map((c) => c.id === userId ? { ...c, isVerified: false } : c)
-  })),
+  removeVerification: async (userId) => {
+    await adminService.removeVerification(userId).catch(console.error);
+    set((state) => ({
+      creators: state.creators.map((c) => c.id === userId ? { ...c, isVerified: false } : c)
+    }));
+  },
   
-  shadowBanUser: (userId) => set((state) => ({
-    creators: state.creators.map((c) => c.id === userId ? { ...c, status: 'shadow_banned' } : c)
-  })),
+  shadowBanUser: async (userId) => {
+    await adminService.shadowBanUser(userId).catch(console.error);
+    set((state) => ({
+      creators: state.creators.map((c) => c.id === userId ? { ...c, status: 'shadow_banned' } : c)
+    }));
+  },
   
-  freezeEarnings: (userId) => set((state) => ({
-    creators: state.creators.map((c) => c.id === userId ? { ...c, earningsFrozen: !c.earningsFrozen } : c)
-  })),
+  freezeEarnings: async (userId) => {
+    await adminService.freezeEarnings(userId).catch(console.error);
+    set((state) => ({
+      creators: state.creators.map((c) => c.id === userId ? { ...c, earningsFrozen: !c.earningsFrozen } : c)
+    }));
+  },
 
   // Actions: Content Management
   removeReel: async (reelId) => {
@@ -383,21 +403,33 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
     }));
   },
   
-  hideReel: (reelId) => set((state) => ({
-    reels: state.reels.map((r) => r.id === reelId ? { ...r, isHidden: !r.isHidden } : r)
-  })),
+  hideReel: async (reelId) => {
+    await adminService.hideReel(reelId).catch(console.error);
+    set((state) => ({
+      reels: state.reels.map((r) => r.id === reelId ? { ...r, isHidden: !r.isHidden } : r)
+    }));
+  },
   
-  forceTrendReel: (reelId) => set((state) => ({
-    reels: state.reels.map((r) => r.id === reelId ? { ...r, isTrending: !r.isTrending } : r)
-  })),
+  forceTrendReel: async (reelId) => {
+    await adminService.forceTrendReel(reelId).catch(console.error);
+    set((state) => ({
+      reels: state.reels.map((r) => r.id === reelId ? { ...r, isTrending: !r.isTrending } : r)
+    }));
+  },
   
-  restrictAgeReel: (reelId) => set((state) => ({
-    reels: state.reels.map((r) => r.id === reelId ? { ...r, ageRestricted: !r.ageRestricted } : r)
-  })),
+  restrictAgeReel: async (reelId) => {
+    await adminService.restrictAgeReel(reelId).catch(console.error);
+    set((state) => ({
+      reels: state.reels.map((r) => r.id === reelId ? { ...r, ageRestricted: !r.ageRestricted } : r)
+    }));
+  },
   
-  disableCommentsReel: (reelId) => set((state) => ({
-    reels: state.reels.map((r) => r.id === reelId ? { ...r, commentsDisabled: !r.commentsDisabled } : r)
-  })),
+  disableCommentsReel: async (reelId) => {
+    await adminService.disableCommentsReel(reelId).catch(console.error);
+    set((state) => ({
+      reels: state.reels.map((r) => r.id === reelId ? { ...r, commentsDisabled: !r.commentsDisabled } : r)
+    }));
+  },
 
   // Payouts & Coins
   approveWithdrawal: async (txId) => {
@@ -425,9 +457,15 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
     }
   },
 
-  updateCoinRates: (rates) => set((state) => ({
-    coinRateSettings: { ...state.coinRateSettings, ...rates }
-  })),
+  updateCoinRates: async (rates) => {
+    try {
+      const updated = { ...usePlatformStore.getState().coinRateSettings, ...rates };
+      await adminService.updateConfig('COIN_RATE_SETTINGS', updated);
+      set((state) => ({ coinRateSettings: updated }));
+    } catch (error) {
+      console.error('Failed to update coin rates', error);
+    }
+  },
   
   addGiftItem: async (gift) => {
     try {
@@ -458,36 +496,57 @@ export const usePlatformStore = create<PlatformState & { fetchAllData: () => Pro
     return { campaigns: [newCamp, ...state.campaigns] };
   }),
   
-  resolveReport: (reportId, action) => set((state) => {
-    const report = state.reports.find((r) => r.id === reportId);
-    if (!report) return {};
-    
-    let updatedReels = [...state.reels];
-    if (action === 'removed') {
-      updatedReels = updatedReels.filter((r) => r.id !== report.targetId);
-      if (report.targetId) {
-        adminService.deleteReel(report.targetId).catch(console.error);
-      }
+  resolveReport: async (reportId, action) => {
+    try {
+      await adminService.resolveReport(reportId, action);
+      set((state) => {
+        const report = state.reports.find((r) => r.id === reportId);
+        if (!report) return {};
+        
+        let updatedReels = [...state.reels];
+        if (action === 'removed') {
+          updatedReels = updatedReels.filter((r) => r.id !== report.targetId);
+        }
+        
+        return {
+          reports: state.reports.map((rep) => rep.id === reportId ? { ...rep, status: 'actioned' } : rep),
+          reels: updatedReels
+        };
+      });
+    } catch (error) {
+      console.error('Failed to resolve report', error);
     }
-    
-    return {
-      reports: state.reports.map((rep) => rep.id === reportId ? { ...rep, status: 'actioned' } : rep),
-      reels: updatedReels
-    };
-  }),
+  },
   
-  sendSupportReply: (ticketId, message) => set((state) => ({
-    tickets: state.tickets.map((t) => t.id === ticketId ? {
-      ...t,
-      status: 'in_progress',
-      chatHistory: [...t.chatHistory, { sender: 'support', message, timestamp: new Date().toISOString() }]
-    } : t)
-  })),
+  sendSupportReply: async (ticketId, message) => {
+    try {
+      await adminService.replyToTicket(ticketId, message);
+      set((state) => ({
+        tickets: state.tickets.map((t) => t.id === ticketId ? {
+          ...t,
+          status: 'in_progress',
+          chatHistory: [...t.chatHistory, { sender: 'support', message, timestamp: new Date().toISOString() }]
+        } : t)
+      }));
+    } catch (error) {
+      console.error('Failed to send reply', error);
+    }
+  },
 
   // Config Sliders & Simulation
   setWeights: (weights) => set((state) => ({
     recommendationWeights: { ...state.recommendationWeights, ...weights }
   })),
+
+  saveWeights: async () => {
+    try {
+      const state = usePlatformStore.getState();
+      await adminService.updateFeedConfig(state.recommendationWeights);
+    } catch (error) {
+      console.error('Failed to save weights', error);
+      throw error;
+    }
+  },
   
   toggleBotAttack: () => set((state) => {
     const current = state.botAttackActive;

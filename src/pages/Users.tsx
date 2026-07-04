@@ -38,10 +38,8 @@ export const UsersPage: React.FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Simulate initial load skeleton
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 600);
-    return () => clearTimeout(timer);
+    setLoading(false);
   }, []);
 
   // Listen to Global Context Multi-City Selector Changes!

@@ -54,6 +54,51 @@ getTransactions: async () => {
     return res.data;
   },
 
+  unbanUser: async (userId: string) => {
+    const res = await apiClient.post(`/admin/users/${userId}/unban`);
+    return res.data;
+  },
+
+  verifyUser: async (userId: string) => {
+    const res = await apiClient.post(`/admin/users/${userId}/verify`);
+    return res.data;
+  },
+
+  removeVerification: async (userId: string) => {
+    const res = await apiClient.post(`/admin/users/${userId}/remove-verification`);
+    return res.data;
+  },
+
+  shadowBanUser: async (userId: string) => {
+    const res = await apiClient.post(`/admin/users/${userId}/shadowban`);
+    return res.data;
+  },
+
+  freezeEarnings: async (userId: string) => {
+    const res = await apiClient.post(`/admin/users/${userId}/freeze-earnings`);
+    return res.data;
+  },
+
+  hideReel: async (reelId: string) => {
+    const res = await apiClient.post(`/admin/reels/${reelId}/hide`);
+    return res.data;
+  },
+
+  forceTrendReel: async (reelId: string) => {
+    const res = await apiClient.post(`/admin/reels/${reelId}/force-trend`);
+    return res.data;
+  },
+
+  restrictAgeReel: async (reelId: string) => {
+    const res = await apiClient.post(`/admin/reels/${reelId}/restrict-age`);
+    return res.data;
+  },
+
+  disableCommentsReel: async (reelId: string) => {
+    const res = await apiClient.post(`/admin/reels/${reelId}/disable-comments`);
+    return res.data;
+  },
+
  approveWithdrawal: async (txId: string) => {
     const res = await apiClient.post(`/admin/withdrawals/${txId}/approve`);
     return res.data;
@@ -81,6 +126,36 @@ getTransactions: async () => {
 
   toggleUserMonetization: async (userId: string) => {
     const res = await apiClient.patch(`/admin/users/${userId}/monetization`);
+    return res.data;
+  },
+
+  getFeedConfig: async () => {
+    const res = await apiClient.get('/admin/feed-config');
+    return res.data;
+  },
+
+  updateFeedConfig: async (weights: any) => {
+    const res = await apiClient.post('/admin/feed-config', weights);
+    return res.data;
+  },
+
+  getConfigs: async () => {
+    const res = await apiClient.get('/admin/configs');
+    return res.data;
+  },
+
+  updateConfig: async (key: string, value: any) => {
+    const res = await apiClient.post('/admin/configs', { key, value });
+    return res.data;
+  },
+
+  resolveReport: async (reportId: string, action: string) => {
+    const res = await apiClient.patch(`/admin/reports/${reportId}/resolve`, { action });
+    return res.data;
+  },
+
+  replyToTicket: async (ticketId: string, message: string) => {
+    const res = await apiClient.post(`/admin/tickets/${ticketId}/reply`, { message });
     return res.data;
   }
 };

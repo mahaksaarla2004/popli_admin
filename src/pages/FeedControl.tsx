@@ -14,7 +14,7 @@ import toast from 'react-hot-toast';
 import { cn } from '@/utils/cn';
 
 export const FeedControlPage: React.FC = () => {
-  const { recommendationWeights, setWeights, reels } = usePlatformStore();
+  const { recommendationWeights, setWeights, saveWeights, reels } = usePlatformStore();
 
   const [activeSubTab, setActiveSubTab] = useState<'recommender' | 'simulation' | 'boost'>('recommender');
   const [boostType, setBoostType] = useState<'hashtag' | 'category' | 'creator'>('hashtag');
@@ -26,10 +26,17 @@ export const FeedControlPage: React.FC = () => {
     setWeights({ [key]: value });
   };
 
-  const handleApplyWeights = () => {
-    toast.success("POPLI algorithm recommendation weights injected successfully!", {
-      icon: '🧠',
-    });
+  const handleApplyWeights = async () => {
+    const toastId = toast.loading('Injecting weights to core engine...', { icon: '⚙️' });
+    try {
+      await saveWeights();
+      toast.success("POPLI algorithm recommendation weights injected successfully!", {
+        id: toastId,
+        icon: '🧠',
+      });
+    } catch (e) {
+      toast.error('Failed to inject algorithmic weights.', { id: toastId, icon: '❌' });
+    }
   };
 
   const handleTriggerBoost = (e: React.FormEvent) => {

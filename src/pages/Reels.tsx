@@ -42,10 +42,8 @@ export const ReelsPage: React.FC = () => {
   const [previewVideo, setPreviewVideo] = useState<Reel | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Simulate loading skeleton
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 500);
-    return () => clearTimeout(timer);
+    setLoading(false);
   }, []);
 
   // Listen to Global Context Multi-City Selector Changes
